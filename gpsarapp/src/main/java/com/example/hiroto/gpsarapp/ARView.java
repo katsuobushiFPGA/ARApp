@@ -11,7 +11,9 @@ import android.graphics.Paint;
 import android.graphics.Paint.FontMetrics;
 import android.graphics.Path;
 import android.graphics.RectF;
+import android.util.Log;
 import android.view.Display;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 
@@ -29,8 +31,9 @@ public class ARView extends View {
     private final float VIEW_LIMIT = 100000;
 
     // コンパスの描画位置を指定する
-    private final float POS_COMPASSX = 20;
-    private final float POS_COMPASSY = 20;
+    private final float POS_COMPASSX = 40;
+    private final float POS_COMPASSY = 40;
+    private final float POS_COMPASS_SIZE = 2;
 
     // 向きを保持する変数
     float direction;
@@ -133,7 +136,7 @@ public class ARView extends View {
         }
 
         // コンパスを描画する
-        drawCompass(canvas, paint);
+        drawCompass(canvas, paint,POS_COMPASS_SIZE);
     }
 
     private void drawBalloonText(Canvas canvas, Paint paint, String text,
@@ -169,22 +172,78 @@ public class ARView extends View {
         paint.setColor(Color.WHITE);
         canvas.drawText(text, left, top, paint);
     }
+    //タッチイベントの処理
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        Paint paint = new Paint();
+        paint.setAntiAlias(true);
+        for (int i = 0; i < list.size(); i++) {
+            // データの読み込み
+            GPSData data = list.get(i);
+            String info = data.info;
+            int y = data.latitude;
+            int x = data.longitude;
+
+            // ARテキストとの距離を求める
+            double dx = (x - posx);
+            double dy = (y - posy);
+            float distance = (float) Math.sqrt(Math.pow(dy, 2)
+                    + Math.pow(dx, 2));
+
+            // ARテキストとの距離が一定以上離れていたら、処理を行わずに次のARテキストの処理を行う
+            if (distance > VIEW_LIMIT) {
+                continue;
+            }
+
+            // ARテキストと現在地のなす角を求めて正規化する
+            double angle = Math.atan2(dy, dx);
+            float degree = (float) Math.toDegrees(angle);
+            degree = -degree + 90;
+            if (degree < 0)
+                degree = 360 + degree;
+
+            // 端末の向きとARテキストとの角度の差を求める
+            float sub = degree - direction;
+            if (sub < -180.0)
+                sub += 360;
+            if (sub > 180.0)
+                sub -= 360;
+
+            // ARテキストが視野に存在すれば描画処理を行う
+            if (Math.abs(sub) < (ANGLE / 2)) {
+                // 距離によってARテキストのサイズを決める
+                float textSize = 50 * (float) (VIEW_LIMIT - distance)
+                        / VIEW_LIMIT;
+                paint.setTextSize(textSize);               // ARテキストの描画を描画する
+                float textWidth = paint.measureText(info);
+                float diff = (sub / (ANGLE / 2)) / 2;
+                float left = (displayX / 2 + displayX * diff) - (textWidth / 2);
+                Log.d("display", "left:" + left );
+                if ( (left <= event.getX() || event.getX() <= left + textWidth)) {
+                    Log.d("TouchEvent", "X:" + event.getX() + ",Y:" + event.getY());
+                }
+            }
+        }
+        return true;
+    }
 
     // コンパスの描画
-    private void drawCompass(Canvas canvas, Paint paint) {
+    private void drawCompass(Canvas canvas, Paint paint,double size) {
         Path path = new Path();
-        path.moveTo(POS_COMPASSX, POS_COMPASSY - 20);
-        path.lineTo(POS_COMPASSX + 10, POS_COMPASSY + 10);
-        path.lineTo(POS_COMPASSX - 10, POS_COMPASSY + 10);
-        path.moveTo(POS_COMPASSX, POS_COMPASSY - 20);
+        path.moveTo(POS_COMPASSX, POS_COMPASSY - 20 * (float)size);
+        path.lineTo(POS_COMPASSX + 10 * (float)size, POS_COMPASSY + 10 * (float)size);
+        path.lineTo(POS_COMPASSX - 10 * (float)size, POS_COMPASSY + 10 * (float)size);
+        path.moveTo(POS_COMPASSX, POS_COMPASSY - 20 * (float)size);
         paint.setColor(Color.RED);
         canvas.rotate(-direction, POS_COMPASSX, POS_COMPASSY);
         canvas.drawPath(path, paint);
         canvas.rotate(direction, POS_COMPASSX, POS_COMPASSY);
-        paint.setTextSize(12);
-        paint.setColor(Color.WHITE);
-        String str = new String();
-        canvas.drawText(str, 5, POS_COMPASSY * 3, paint);
+//        paint.setTextSize(12);
+//        paint.setColor(Color.WHITE);
+//        String str = new String();
+//        canvas.drawText(str, 5, POS_COMPASSY * 3, paint);
+
+        canvas.translate(100,100);
     }
 
     public void drawScreen(float preDirection, GeoPoint geoPoint) {

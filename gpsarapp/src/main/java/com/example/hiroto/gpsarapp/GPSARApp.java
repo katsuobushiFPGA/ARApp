@@ -105,7 +105,6 @@ public class GPSARApp extends Activity implements SensorEventListener,
                 LayoutParams.FILL_PARENT));
         addContentView(layout, new LayoutParams(LayoutParams.FILL_PARENT,
                 LayoutParams.FILL_PARENT));
-
     }
 
     @Override
@@ -277,5 +276,6 @@ public class GPSARApp extends Activity implements SensorEventListener,
             onCreate(db);
         }
     }
+
 
 }
