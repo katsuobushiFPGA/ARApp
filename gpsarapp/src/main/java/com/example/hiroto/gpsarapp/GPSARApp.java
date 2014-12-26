@@ -191,12 +191,12 @@ public class GPSARApp extends Activity implements SensorEventListener,
         db = helper.getWritableDatabase();
 
         cursor = db.query(DB_TABLE, new String[] { "info", "latitude",
-                "longitude" }, null, null, null, null, null);
+                "longitude" }, null, null, null, null, null,null);
         // テーブルが空の時内容をセットする
         if (cursor.getCount() < 1) {
             presetTable();
             cursor = db.query(DB_TABLE, new String[] { "info", "latitude",
-                    "longitude" }, null, null, null, null, null);
+                    "longitude"}, null, null, null, null, null);
         }
     }
 
@@ -227,26 +227,37 @@ public class GPSARApp extends Activity implements SensorEventListener,
         values.put("info", "安田講堂");
         values.put("latitude", 35713433);
         values.put("longitude", 139762594);
+        values.put("image", "yasudakodo");
         db.insert(DB_TABLE, "", values);
         values.put("info", "東京ドーム");
         values.put("latitude", 35705593);
         values.put("longitude", 139752252);
+        values.put("image","tokyodome");
         db.insert(DB_TABLE, "", values);
         values.put("info", "東京スカイツリー");
         values.put("latitude", 35710084);
         values.put("longitude", 139810751);
+        values.put("image","skytree");
         db.insert(DB_TABLE, "", values);
         values.put("info", "明治神宮");
         values.put("latitude", 35676402);
         values.put("longitude", 139700174);
+        values.put("image", "meijijingu");
         db.insert(DB_TABLE, "", values);
         values.put("info", "国会議事堂");
         values.put("latitude", 35675844);
         values.put("longitude", 139745578);
+        values.put("image", "kokkaigijido");
         db.insert(DB_TABLE, "", values);
         values.put("info", "谷中銀座");
         values.put("latitude", 35727594);
         values.put("longitude", 139765215);
+        values.put("image", "yanakaginza");
+        db.insert(DB_TABLE, "", values);
+        values.put("info", "東京タワー");
+        values.put("latitude", 3565858);
+        values.put("longitude", 139745433);
+        values.put("image","tokyotower");
         db.insert(DB_TABLE, "", values);
     }
 
@@ -264,7 +275,7 @@ public class GPSARApp extends Activity implements SensorEventListener,
         public void onCreate(SQLiteDatabase db) {
             // テーブルの作成
             String sql = "create table if not exists " + DB_TABLE
-                    + "(info text, latitude numeric, longitude numeric)";
+                    + "(info text, latitude numeric, longitude numeric, image text)";
             db.execSQL(sql);
         }
 
@@ -275,6 +286,12 @@ public class GPSARApp extends Activity implements SensorEventListener,
             db.execSQL("drop table if exists " + DB_TABLE);
             onCreate(db);
         }
+        //dbアクセス用
+        public SQLiteDatabase getDB(){
+            return db;
+        }
+
+
     }
 
 

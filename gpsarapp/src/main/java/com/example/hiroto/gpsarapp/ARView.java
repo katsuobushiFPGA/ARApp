@@ -3,7 +3,9 @@ package com.example.hiroto.gpsarapp;
 /**
  * Created by hiroto on 2014/12/24.
  */
+
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -23,19 +25,20 @@ import java.util.ArrayList;
 
 //public class ARView extends SurfaceView implements SurfaceHolder.Callback {
 public class ARView extends View {
-
+    //
+    private GPSARApp gpsActivity;
     // カメラの画角を指定する
     private final int ANGLE = 60;
     // ARテキストの見える範囲を指定する
     // ここでは10kmほどに指定する
     private final float VIEW_LIMIT = 100000;
 
-    // コンパスの描画位置を指定する
+    // コンパスの描画位置および大きさを指定する
     private final float POS_COMPASSX = 40;
     private final float POS_COMPASSY = 40;
     private final float POS_COMPASS_SIZE = 2;
 
-    // 向きを保持する変数
+    // 方向を保持する変数
     float direction;
 
     // 現在地を保持する変数
@@ -49,7 +52,7 @@ public class ARView extends View {
 
     public ARView(Context context, Cursor cursor) {
         super(context);
-
+        gpsActivity = (GPSARApp)context;
         // データベースの読み込みを行う
         readTable(cursor);
 
@@ -172,55 +175,64 @@ public class ARView extends View {
         paint.setColor(Color.WHITE);
         canvas.drawText(text, left, top, paint);
     }
+
     //タッチイベントの処理
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        Paint paint = new Paint();
-        paint.setAntiAlias(true);
-        for (int i = 0; i < list.size(); i++) {
-            // データの読み込み
-            GPSData data = list.get(i);
-            String info = data.info;
-            int y = data.latitude;
-            int x = data.longitude;
+        if(event.getAction() == MotionEvent.ACTION_UP){
+            Paint paint = new Paint();
+            paint.setAntiAlias(true);
+            for (int i = 0; i < list.size(); i++) {
+                // データの読み込み
+                GPSData data = list.get(i);
+                String info = data.info;
+                int y = data.latitude;
+                int x = data.longitude;
 
-            // ARテキストとの距離を求める
-            double dx = (x - posx);
-            double dy = (y - posy);
-            float distance = (float) Math.sqrt(Math.pow(dy, 2)
-                    + Math.pow(dx, 2));
+                // ARテキストとの距離を求める
+                double dx = (x - posx);
+                double dy = (y - posy);
+                float distance = (float) Math.sqrt(Math.pow(dy, 2)
+                        + Math.pow(dx, 2));
 
-            // ARテキストとの距離が一定以上離れていたら、処理を行わずに次のARテキストの処理を行う
-            if (distance > VIEW_LIMIT) {
-                continue;
-            }
+                // ARテキストとの距離が一定以上離れていたら、処理を行わずに次のARテキストの処理を行う
+                if (distance > VIEW_LIMIT) {
+                    continue;
+                }
 
-            // ARテキストと現在地のなす角を求めて正規化する
-            double angle = Math.atan2(dy, dx);
-            float degree = (float) Math.toDegrees(angle);
-            degree = -degree + 90;
-            if (degree < 0)
-                degree = 360 + degree;
+                // ARテキストと現在地のなす角を求めて正規化する
+                double angle = Math.atan2(dy, dx);
+                float degree = (float) Math.toDegrees(angle);
+                degree = -degree + 90;
+                if (degree < 0)
+                    degree = 360 + degree;
 
-            // 端末の向きとARテキストとの角度の差を求める
-            float sub = degree - direction;
-            if (sub < -180.0)
-                sub += 360;
-            if (sub > 180.0)
-                sub -= 360;
+                // 端末の向きとARテキストとの角度の差を求める
+                float sub = degree - direction;
+                if (sub < -180.0)
+                    sub += 360;
+                if (sub > 180.0)
+                    sub -= 360;
 
-            // ARテキストが視野に存在すれば描画処理を行う
-            if (Math.abs(sub) < (ANGLE / 2)) {
-                // 距離によってARテキストのサイズを決める
-                float textSize = 50 * (float) (VIEW_LIMIT - distance)
-                        / VIEW_LIMIT;
-                paint.setTextSize(textSize);               // ARテキストの描画を描画する
-                float textWidth = paint.measureText(info);
-                float diff = (sub / (ANGLE / 2)) / 2;
-                float left = (displayX / 2 + displayX * diff) - (textWidth / 2);
-                Log.d("display", "left:" + left );
-                if ( (left <= event.getX() || event.getX() <= left + textWidth)) {
-                    Log.d("TouchEvent", "X:" + event.getX() + ",Y:" + event.getY());
+                // ARテキストが視野に存在すれば描画処理を行う
+                if (Math.abs(sub) < (ANGLE / 2)) {
+                    // 距離によってARテキストのサイズを決める
+                    float textSize = 50 * (float) (VIEW_LIMIT - distance)
+                            / VIEW_LIMIT;
+                    paint.setTextSize(textSize);               // ARテキストの描画を描画する
+                    float textWidth = paint.measureText(info);
+                    float diff = (sub / (ANGLE / 2)) / 2;
+                    float left = (displayX / 2 + displayX * diff) - (textWidth / 2);
+                    if ((left <= event.getX() && event.getX() <= left + textWidth) && (0 <= event.getY() && event.getY() <= 55)) {
+                        //Intentの発行および、SpotActivityの呼び出し
+                        Log.d("TouchEvent", "X:" + event.getX() + ",Y:" + event.getY());
+                        Log.d("TouchEvent", "textWidth" + textWidth);
+                        Log.d("TouchEvent", "info" + info);
+
+                        Intent intent = new Intent(gpsActivity, SpotActivity.class);
+                        intent.putExtra("image",info);//infoを送る。(観光地)
+                        gpsActivity.startActivity(intent);
+                    }
                 }
             }
         }
@@ -242,8 +254,6 @@ public class ARView extends View {
 //        paint.setColor(Color.WHITE);
 //        String str = new String();
 //        canvas.drawText(str, 5, POS_COMPASSY * 3, paint);
-
-        canvas.translate(100,100);
     }
 
     public void drawScreen(float preDirection, GeoPoint geoPoint) {
