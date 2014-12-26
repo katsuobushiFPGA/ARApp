@@ -15,6 +15,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.View;
@@ -191,12 +192,12 @@ public class GPSARApp extends Activity implements SensorEventListener,
         db = helper.getWritableDatabase();
 
         cursor = db.query(DB_TABLE, new String[] { "info", "latitude",
-                "longitude" }, null, null, null, null, null,null);
+                "longitude","image" , "description" }, null, null, null, null, null);
         // テーブルが空の時内容をセットする
         if (cursor.getCount() < 1) {
             presetTable();
             cursor = db.query(DB_TABLE, new String[] { "info", "latitude",
-                    "longitude"}, null, null, null, null, null);
+                    "longitude","image" , "description" }, null, null, null, null, null);
         }
     }
 
@@ -211,6 +212,8 @@ public class GPSARApp extends Activity implements SensorEventListener,
             values.put("info", editText.getText().toString());
             values.put("latitude", geoPoint.getLatitudeE6());
             values.put("longitude", geoPoint.getLongitudeE6());
+            values.put("image","dummy");//image dummy
+            values.put("description","description");//description dummy
             db.insert(DB_TABLE, "", values);
             cursor = db.query(DB_TABLE, new String[] { "info", "latitude",
                     "longitude" }, null, null, null, null, null);
@@ -222,42 +225,50 @@ public class GPSARApp extends Activity implements SensorEventListener,
     }
 
     private void presetTable() {
+        Log.d("presetTable","run!");
         // テーブルの内容が空の時以下の内容をセットする
         ContentValues values = new ContentValues();
         values.put("info", "安田講堂");
         values.put("latitude", 35713433);
         values.put("longitude", 139762594);
         values.put("image", "yasudakodo");
+        values.put("description", "yasuda_kodo");
         db.insert(DB_TABLE, "", values);
         values.put("info", "東京ドーム");
         values.put("latitude", 35705593);
         values.put("longitude", 139752252);
         values.put("image","tokyodome");
+        values.put("description", "tokyo_dome");
         db.insert(DB_TABLE, "", values);
         values.put("info", "東京スカイツリー");
         values.put("latitude", 35710084);
         values.put("longitude", 139810751);
-        values.put("image","skytree");
+        values.put("image", "skytree");
+        values.put("description", "sky_tree");
         db.insert(DB_TABLE, "", values);
         values.put("info", "明治神宮");
         values.put("latitude", 35676402);
         values.put("longitude", 139700174);
         values.put("image", "meijijingu");
+        values.put("description", "meiji_jingu");
         db.insert(DB_TABLE, "", values);
         values.put("info", "国会議事堂");
         values.put("latitude", 35675844);
         values.put("longitude", 139745578);
         values.put("image", "kokkaigijido");
+        values.put("description", "kokkai_gijido");
         db.insert(DB_TABLE, "", values);
         values.put("info", "谷中銀座");
         values.put("latitude", 35727594);
         values.put("longitude", 139765215);
         values.put("image", "yanakaginza");
+        values.put("description", "yanaka_ginza");
         db.insert(DB_TABLE, "", values);
         values.put("info", "東京タワー");
         values.put("latitude", 3565858);
         values.put("longitude", 139745433);
         values.put("image","tokyotower");
+        values.put("description", "tokyo_tower");
         db.insert(DB_TABLE, "", values);
     }
 
@@ -275,7 +286,8 @@ public class GPSARApp extends Activity implements SensorEventListener,
         public void onCreate(SQLiteDatabase db) {
             // テーブルの作成
             String sql = "create table if not exists " + DB_TABLE
-                    + "(info text, latitude numeric, longitude numeric, image text)";
+                    + "(info text, latitude numeric, longitude numeric, image text , description text)";
+            Log.d("GPSARApp ,Table:",sql);
             db.execSQL(sql);
         }
 

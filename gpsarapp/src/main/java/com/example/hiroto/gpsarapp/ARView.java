@@ -75,6 +75,8 @@ public class ARView extends View {
             data.info = cursor.getString(0);
             data.latitude = cursor.getInt(1);
             data.longitude = cursor.getInt(2);
+            data.image = cursor.getString(3);
+            data.description = cursor.getString(4);
             list.add(data);
         } while (cursor.moveToNext());
     }
@@ -83,6 +85,8 @@ public class ARView extends View {
         public String info;
         public int latitude;
         public int longitude;
+        public String image;
+        public String description;
     }
 
     // 描画処理
@@ -188,6 +192,8 @@ public class ARView extends View {
                 String info = data.info;
                 int y = data.latitude;
                 int x = data.longitude;
+                String image = data.image;
+                String description = data.description;
 
                 // ARテキストとの距離を求める
                 double dx = (x - posx);
@@ -228,9 +234,12 @@ public class ARView extends View {
                         Log.d("TouchEvent", "X:" + event.getX() + ",Y:" + event.getY());
                         Log.d("TouchEvent", "textWidth" + textWidth);
                         Log.d("TouchEvent", "info" + info);
+                        Log.d("TouchEvent", "image" + image);
+                        Log.d("TouchEvent", "description" + description);
 
                         Intent intent = new Intent(gpsActivity, SpotActivity.class);
-                        intent.putExtra("image",info);//infoを送る。(観光地)
+                        intent.putExtra("image",image);//infoを送る。(観光地)
+                        intent.putExtra("description",description);//説明文を送る。(観光地)
                         gpsActivity.startActivity(intent);
                     }
                 }
