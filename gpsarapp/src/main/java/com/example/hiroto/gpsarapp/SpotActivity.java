@@ -16,13 +16,19 @@ public class SpotActivity extends Activity {
     public void onCreate(Bundle savedInstance) {
         super.onCreate(savedInstance);
         setContentView(R.layout.activity_spot);
+
         Intent i = getIntent();//呼び出し元のintentを取得
+
         String description = i.getStringExtra("description");//説明文
-        String img = i.getStringExtra("image");
-        int imgid = getResources().getIdentifier("img","drawable", getPackageName());//imgid取得
+        String img = i.getStringExtra("image");//画像
+
+        int desid = getResources().getIdentifier(description,"drawable", getPackageName());//desid取得
+        int imgid = getResources().getIdentifier(img,"drawable", getPackageName());//imgid取得
+
         image = (ImageView)findViewById(R.id.imageView);
         image.setImageResource(R.drawable.tokyotower);
 //        image.setImageResource(imgid);
+//        text.setText(desid);
     }
     @Override
     public void onStop() {
