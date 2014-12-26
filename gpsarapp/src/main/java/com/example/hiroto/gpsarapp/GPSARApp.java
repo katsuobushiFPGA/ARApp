@@ -213,7 +213,7 @@ public class GPSARApp extends Activity implements SensorEventListener,
             values.put("latitude", geoPoint.getLatitudeE6());
             values.put("longitude", geoPoint.getLongitudeE6());
             values.put("image","dummy");//image dummy
-            values.put("description","description");//description dummy
+            values.put("description","dummy");//description dummy
             db.insert(DB_TABLE, "", values);
             cursor = db.query(DB_TABLE, new String[] { "info", "latitude",
                     "longitude" }, null, null, null, null, null);

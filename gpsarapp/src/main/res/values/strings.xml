@@ -4,6 +4,7 @@
     <string name="app_name">GPSARApp</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="dummy">dummy!</string>
     <string name="yasuda_kodo">安田講堂（やすだこうどう）は、東京大学本郷キャンパスにある講堂である。\n
                                    正式には東京大学大講堂（とうきょうだいがくだいこうどう）というが、\n
                                    東大の学内では安田講堂が用いられることに決まっている。\n
