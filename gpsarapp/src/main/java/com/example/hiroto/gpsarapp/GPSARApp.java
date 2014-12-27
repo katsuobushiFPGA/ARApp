@@ -48,10 +48,10 @@ public class GPSARApp extends Activity implements SensorEventListener,
     private GeomagneticField geomagneticField;
 
     // データベースで使用する変数
-    private final static String DB_NAME = "gps_data.db";
-    private final static String DB_TABLE = "gps_data";
+    public final static String DB_NAME = "gps_data.db";
+    public final static String DB_TABLE = "gps_data";
     private final static int DB_VERSION = 1;
-    private SQLiteDatabase db;
+    private static SQLiteDatabase db;
     Cursor cursor;
 
     private static final int BUTTON_SIZE = 80;
@@ -216,7 +216,7 @@ public class GPSARApp extends Activity implements SensorEventListener,
             values.put("description","dummy");//description dummy
             db.insert(DB_TABLE, "", values);
             cursor = db.query(DB_TABLE, new String[] { "info", "latitude",
-                    "longitude" }, null, null, null, null, null);
+                    "longitude","image","description" }, null, null, null, null, null);
             arView.readTable(cursor);
             cursor.close();
             editText.setText("");
@@ -224,7 +224,7 @@ public class GPSARApp extends Activity implements SensorEventListener,
         }
     }
 
-    private void presetTable() {
+    public void presetTable() {
         Log.d("presetTable","run!");
         // テーブルの内容が空の時以下の内容をセットする
         ContentValues values = new ContentValues();
@@ -265,7 +265,7 @@ public class GPSARApp extends Activity implements SensorEventListener,
         values.put("description", "yanaka_ginza");
         db.insert(DB_TABLE, "", values);
         values.put("info", "東京タワー");
-        values.put("latitude", 3565858);
+        values.put("latitude", 35658580);
         values.put("longitude", 139745433);
         values.put("image","tokyotower");
         values.put("description", "tokyo_tower");
@@ -298,13 +298,14 @@ public class GPSARApp extends Activity implements SensorEventListener,
             db.execSQL("drop table if exists " + DB_TABLE);
             onCreate(db);
         }
-        //dbアクセス用
-        public SQLiteDatabase getDB(){
-            return db;
-        }
 
 
     }
+    //dbアクセス用
+    public SQLiteDatabase getDB(){
+        return db;
+    }
+
 
 
 }

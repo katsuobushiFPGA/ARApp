@@ -7,6 +7,7 @@
     <string name="gpsarapp">GPSARApp</string>
     <string name="game_mode">Gamemode</string>
     <string name="two_dimension">2D地図</string>
+    <string name="google_maps_key"></string>
     <string name="dummy">dummy!</string>
     <string name="yasuda_kodo">安田講堂（やすだこうどう）は、東京大学本郷キャンパスにある講堂である。\n
                                    正式には東京大学大講堂（とうきょうだいがくだいこうどう）というが、\n
@@ -39,4 +40,7 @@
                                    1958年10月14日竣工、同年12月23日に完工式が開かれた。\n
                                    東京のシンボル・観光名所として知られる。\n
                                    正式名称は日本電波塔（にっぽんでんぱとう）。\n</string>
+    <string name="title_activity_maps">MapsActivity</string>
+    <string name="title_activity_maps_activity">Map</string>
+
 </resources>

@@ -44,7 +44,7 @@ public class TitleActivity extends Activity implements View.OnClickListener{
             Intent intent = new Intent(TitleActivity.this, GPSARApp.class);
             startActivity(intent);
         }else if (v == button_map){
-            Intent intent = new Intent(TitleActivity.this, GPSARApp.class);
+            Intent intent = new Intent(TitleActivity.this, MapsActivity.class);
             startActivity(intent);
         }else {
             Toast.makeText(this, "No detected Button", Toast.LENGTH_LONG).show();
