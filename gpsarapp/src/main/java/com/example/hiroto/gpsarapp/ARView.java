@@ -13,7 +13,6 @@ import android.graphics.Paint;
 import android.graphics.Paint.FontMetrics;
 import android.graphics.Path;
 import android.graphics.RectF;
-import android.util.Log;
 import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
@@ -26,7 +25,7 @@ import java.util.ArrayList;
 //public class ARView extends SurfaceView implements SurfaceHolder.Callback {
 public class ARView extends View {
     //
-    private GPSARApp gpsActivity;
+    private ARActivity arActivity;
     // カメラの画角を指定する
     private final int ANGLE = 60;
     // ARテキストの見える範囲を指定する
@@ -52,7 +51,7 @@ public class ARView extends View {
 
     public ARView(Context context, Cursor cursor) {
         super(context);
-        gpsActivity = (GPSARApp)context;
+        arActivity = (ARActivity)context;
         // データベースの読み込みを行う
         readTable(cursor);
 
@@ -231,16 +230,10 @@ public class ARView extends View {
                     float left = (displayX / 2 + displayX * diff) - (textWidth / 2);
                     if ((left <= event.getX() && event.getX() <= left + textWidth) && (0 <= event.getY() && event.getY() <= 55)) {
                         //Intentの発行および、SpotActivityの呼び出し
-                        Log.d("TouchEvent", "X:" + event.getX() + ",Y:" + event.getY());
-                        Log.d("TouchEvent", "textWidth" + textWidth);
-                        Log.d("TouchEvent", "info" + info);
-                        Log.d("TouchEvent", "image" + image);
-                        Log.d("TouchEvent", "description" + description);
-
-                        Intent intent = new Intent(gpsActivity, SpotActivity.class);
+                        Intent intent = new Intent(arActivity, SpotActivity.class);
                         intent.putExtra("image",image);//infoを送る。(観光地)
                         intent.putExtra("description",description);//説明文を送る。(観光地)
-                        gpsActivity.startActivity(intent);
+                        arActivity.startActivity(intent);
                     }
                 }
             }

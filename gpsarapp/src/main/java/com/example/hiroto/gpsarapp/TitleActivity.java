@@ -14,6 +14,7 @@ public class TitleActivity extends Activity implements View.OnClickListener{
     Button button_gps;
     Button button_game;
     Button button_map;
+    DBService db;
 
     @Override
     public void onCreate(Bundle savedInstance) {
@@ -25,6 +26,8 @@ public class TitleActivity extends Activity implements View.OnClickListener{
         button_gps.setOnClickListener(this);
         button_game.setOnClickListener(this);
         button_map.setOnClickListener(this);
+        db = new DBService();
+        startService(new Intent(TitleActivity.this, DBService.class));
     }
     @Override
     public void onStop() {
@@ -33,15 +36,16 @@ public class TitleActivity extends Activity implements View.OnClickListener{
     @Override
     public void onDestroy() {
         super.onDestroy();
+        stopService(new Intent(TitleActivity.this, DBService.class));
     }
 
     @Override
     public void onClick(View v) {
         if (v == button_gps){
-            Intent intent = new Intent(TitleActivity.this, GPSARApp.class);
+            Intent intent = new Intent(TitleActivity.this, ARActivity.class);
             startActivity(intent);
         }else if (v == button_game){
-            Intent intent = new Intent(TitleActivity.this, GPSARApp.class);
+            Intent intent = new Intent(TitleActivity.this, ARActivity.class);
             startActivity(intent);
         }else if (v == button_map){
             Intent intent = new Intent(TitleActivity.this, MapsActivity.class);

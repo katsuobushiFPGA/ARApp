@@ -27,9 +27,9 @@ public class MapsActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps_activity);
         setUpMapIfNeeded();//インスタンスをmMapで取得
-        setUISettings();
-        setUpCamera();
-        setDBMarker();
+        setUISettings();//UIを設定
+        setUpCamera();//カメラの初期位置を設定
+        setDBMarker();//データベースの情報をマーカに設定
         Toast.makeText(this,"onStart",Toast.LENGTH_SHORT).show();
         calcDistance(35727594,139765215,"谷中銀座");
     }
@@ -116,8 +116,8 @@ public class MapsActivity extends FragmentActivity {
     //DBからmarker情報を取得
     //GPSARAppを起動してからでないと落ちる。(DBデータがないため)
     private void setDBMarker() {
-        SQLiteDatabase sql = new GPSARApp().getDB();
-        Cursor cur = sql.query(GPSARApp.DB_TABLE, new String[]{"info", "latitude",
+        SQLiteDatabase sql = DBService.db;
+        Cursor cur = sql.query(DBService.DB_TABLE, new String[]{"info", "latitude",
                 "longitude", "image", "description"}, null, null, null, null, null);
         cur.moveToFirst();
         do {
