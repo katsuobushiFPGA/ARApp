@@ -30,21 +30,21 @@ public class MapsActivity extends FragmentActivity {
         setUISettings();//UIを設定
         setUpCamera();//カメラの初期位置を設定
         setDBMarker();//データベースの情報をマーカに設定
-        Toast.makeText(this,"onStart",Toast.LENGTH_SHORT).show();
-        calcDistance(35727594,139765215,"谷中銀座");
-
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         setUpMapIfNeeded();
-        Toast.makeText(this,"onResume",Toast.LENGTH_SHORT).show();
     }
 
     @Override
     protected void onRestart() {
         super.onRestart();
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
     }
 
     private void setUpMapIfNeeded() {
@@ -75,7 +75,7 @@ public class MapsActivity extends FragmentActivity {
             //現在地情報取得失敗時の処理
             Toast.makeText(this, "現在地取得できません", Toast.LENGTH_SHORT).show();
         }else {
-            CameraUpdate cu = CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 15);//カメラのズーム12
+            CameraUpdate cu = CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 15);//カメラのズーム15
             mMap.moveCamera(cu);
         }
     }

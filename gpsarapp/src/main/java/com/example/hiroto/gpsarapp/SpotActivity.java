@@ -34,6 +34,11 @@ public class SpotActivity extends Activity {
         super.onStop();
     }
     @Override
+    public void onRestart() {
+        super.onRestart();
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
     }

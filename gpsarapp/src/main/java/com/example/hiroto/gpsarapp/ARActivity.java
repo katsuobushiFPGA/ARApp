@@ -60,9 +60,8 @@ public class ARActivity extends Activity implements SensorEventListener,
         requestWindowFeature(Window.FEATURE_NO_TITLE);
 
         // ARViewの取得
-        arView = new ARView(this, DBService.cursor);
-        DBService.cursor.close();
-
+            arView = new ARView(this, DBService.cursor);
+        //  DBService.cursor.close();
         // 各種センサーの用意
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         listMag = sensorManager.getSensorList(Sensor.TYPE_MAGNETIC_FIELD);
@@ -122,7 +121,14 @@ public class ARActivity extends Activity implements SensorEventListener,
         locationManager.removeUpdates(this);
         sensorManager.unregisterListener(this);
     }
-
+    @Override
+    public void onRestart() {
+        super.onRestart();
+    }
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+    }
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
     }
@@ -194,7 +200,7 @@ public class ARActivity extends Activity implements SensorEventListener,
             DBService.cursor = DBService.db.query(DBService.DB_TABLE, new String[] { "info", "latitude",
                     "longitude","image","description" }, null, null, null, null, null);
             arView.readTable(DBService.cursor);
-            DBService.cursor.close();
+//            DBService.cursor.close();
             editText.setText("");
             Toast.makeText(this, "テキストが登録されました", Toast.LENGTH_LONG).show();
         }

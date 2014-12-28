@@ -33,6 +33,8 @@ public class DBService extends Service {
     }
     @Override
     public void onDestroy() {
+        super.onDestroy();
+        cursor.close();
     }
 
     //サービスに接続するためのBinder
