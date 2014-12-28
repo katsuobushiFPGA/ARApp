@@ -9,7 +9,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Binder;
 import android.os.IBinder;
-import android.util.Log;
 
 /**
  * Created by hiroto on 2014/12/28.
@@ -21,7 +20,7 @@ public class DBService extends Service {
     public final static int DB_VERSION = 1;
     public static SQLiteDatabase db;
     public static Cursor cursor;
-    private TitleActivity title;
+    private final IBinder mBinder = new DBServiceBinder();    //Binderの生成
 
     @Override
     public void onCreate() {
@@ -43,8 +42,7 @@ public class DBService extends Service {
             return DBService.this;
         }
     }
-    //Binderの生成
-    private final IBinder mBinder = new DBServiceBinder();
+
     @Override
     public IBinder onBind(Intent intent) {
         return mBinder;
@@ -65,7 +63,6 @@ public class DBService extends Service {
         }
     }
     public void presetTable() {
-        Log.d("presetTable", "run!");
         // テーブルの内容が空の時以下の内容をセットする
         ContentValues values = new ContentValues();
         values.put("info", "安田講堂");
@@ -123,7 +120,6 @@ public class DBService extends Service {
             // テーブルの作成
             String sql = "create table if not exists " + DB_TABLE
                     + "(info text, latitude numeric, longitude numeric, image text , description text)";
-            Log.d("GPSARApp ,Table:",sql);
             db.execSQL(sql);
         }
 

@@ -7,7 +7,6 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdate;
@@ -16,6 +15,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.maps.GeoPoint;
 
@@ -32,6 +32,7 @@ public class MapsActivity extends FragmentActivity {
         setDBMarker();//データベースの情報をマーカに設定
         Toast.makeText(this,"onStart",Toast.LENGTH_SHORT).show();
         calcDistance(35727594,139765215,"谷中銀座");
+
     }
 
     @Override
@@ -102,7 +103,6 @@ public class MapsActivity extends FragmentActivity {
                     lng,
                     results);
             if(results != null && results.length > 0) {
-                Log.d("location","results");
                 if(results[0] < 1000)
                     distance = String.valueOf((int)results[0] + "m") ;
                 else
@@ -114,7 +114,6 @@ public class MapsActivity extends FragmentActivity {
         }
     }
     //DBからmarker情報を取得
-    //GPSARAppを起動してからでないと落ちる。(DBデータがないため)
     private void setDBMarker() {
         SQLiteDatabase sql = DBService.db;
         Cursor cur = sql.query(DBService.DB_TABLE, new String[]{"info", "latitude",
@@ -125,6 +124,14 @@ public class MapsActivity extends FragmentActivity {
             int latitude = cur.getInt(1);
             int longitude = cur.getInt(2);
             setUpMarker(latitude, longitude, info);
+            // マーカークリック時のイベントハンドラ登録
+            mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                @Override
+                public boolean onMarkerClick(Marker marker) {
+                    calcDistance((int)(marker.getPosition().latitude*1E6),(int)(marker.getPosition().longitude*1E6),marker.getTitle());
+                    return false;
+                }
+            });
         } while (cur.moveToNext());
         //カーソルクローズ
         cur.close();
