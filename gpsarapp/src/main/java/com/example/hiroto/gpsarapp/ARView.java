@@ -137,7 +137,7 @@ public class ARView extends View {
                 float textWidth = paint.measureText(info);
                 float diff = (sub / (ANGLE / 2)) / 2;
                 float left = (displayX / 2 + displayX * diff) - (textWidth / 2);
-                drawBalloonText(canvas, paint, info, left, 55);
+                drawBalloonText(canvas, paint, info , left, 55);
             }
         }
 
@@ -231,6 +231,9 @@ public class ARView extends View {
                     if ((left <= event.getX() && event.getX() <= left + textWidth) && (0 <= event.getY() && event.getY() <= 55)) {
                         //Intentの発行および、SpotActivityの呼び出し
                         Intent intent = new Intent(arActivity, SpotActivity.class);
+                        intent.putExtra("lat",y);
+                        intent.putExtra("lng",x);
+                        intent.putExtra("info",info);
                         intent.putExtra("image",image);//infoを送る。(観光地)
                         intent.putExtra("description",description);//説明文を送る。(観光地)
                         arActivity.startActivity(intent);

@@ -4,30 +4,31 @@
     android:layout_height="match_parent">
 
     <Button
-        android:layout_width="310dp"
-        android:layout_height="156dp"
+        android:layout_width="320dp"
+        android:layout_height="180dp"
         android:text="@string/two_dimension"
         android:id="@+id/button_map"
-        android:layout_gravity="center_horizontal|bottom" />
+        android:layout_gravity="center_horizontal|bottom"/>
 
     <Button
-        android:layout_width="324dp"
-        android:layout_height="150dp"
+        android:layout_width="320dp"
+        android:layout_height="180dp"
         android:text="@string/gpsarapp"
         android:id="@+id/button_gpsarapp"
-        android:layout_gravity="left|center_vertical" />
+        android:layout_gravity="left|center_vertical"/>
 
     <Button
-        android:layout_width="319dp"
-        android:layout_height="176dp"
+        android:layout_width="320dp"
+        android:layout_height="180dp"
         android:text="@string/object"
         android:id="@+id/button_object"
         android:layout_gravity="center_horizontal|top" />
 
     <Button
-        android:layout_width="319dp"
-        android:layout_height="160dp"
+        android:layout_width="320dp"
+        android:layout_height="180dp"
         android:text="@string/game_mode"
         android:id="@+id/button_gamemode"
         android:layout_gravity="right|center_vertical" />
+
 </FrameLayout>

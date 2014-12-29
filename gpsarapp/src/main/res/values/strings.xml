@@ -6,8 +6,10 @@
     <string name="action_settings">Settings</string>
     <string name="gpsarapp">GPSARApp</string>
     <string name="game_mode">Gamemode</string>
-    <string name="two_dimension">2D地図</string>
+    <string name="two_dimension">GoogleMaps</string>
     <string name="object">オブジェクト検出</string>
+    <string name="navi">ここをナビ</string>
+    <string name="how_long_distance">ここの距離</string>
     <string name="google_maps_key"></string>
     <string name="dummy">dummy!</string>
     <string name="yasuda_kodo">安田講堂（やすだこうどう）は、東京大学本郷キャンパスにある講堂である。\n
