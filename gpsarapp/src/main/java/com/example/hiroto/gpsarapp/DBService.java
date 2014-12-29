@@ -109,6 +109,24 @@ public class DBService extends Service {
         values.put("image","tokyotower");
         values.put("description", "tokyo_tower");
         db.insert(DB_TABLE, "", values);
+        values.put("info", "東京電機大学");
+        values.put("latitude", 35748256);
+        values.put("longitude", 139806906);
+        values.put("image","tokyo_denki_university");
+        values.put("description", "tokyo_denki_university");
+        db.insert(DB_TABLE, "", values);
+        values.put("info", "レインボーブリッジ");
+        values.put("latitude", 35636564);
+        values.put("longitude", 139763144);
+        values.put("image","rainbow_bridge");
+        values.put("description", "rainbow_bridge");
+        db.insert(DB_TABLE, "", values);
+        values.put("info", "北千住駅");
+        values.put("latitude", 35749412);
+        values.put("longitude", 139805108);
+        values.put("image","kitasenju_station");
+        values.put("description", "kitasenju_station");
+        db.insert(DB_TABLE, "", values);
     }
     //SQLクラス
     public class SQLiteOpenHelperEx extends SQLiteOpenHelper {

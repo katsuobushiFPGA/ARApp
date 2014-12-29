@@ -19,6 +19,8 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.maps.GeoPoint;
 
+import java.math.BigDecimal;
+
 public class MapsActivity extends FragmentActivity {
 
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
@@ -106,7 +108,7 @@ public class MapsActivity extends FragmentActivity {
                 if(results[0] < 1000)
                     distance = String.valueOf((int)results[0] + "m") ;
                 else
-                    distance = String.valueOf((int)(results[0] / 1E3) + "km") ;
+                    distance = new BigDecimal(results[0]).divide(new BigDecimal(1E3),3,BigDecimal.ROUND_HALF_UP).toString() + "km";
                 Toast.makeText(this,"現在地から" + info + "までの距離" + distance ,Toast.LENGTH_SHORT).show();
             }
         } catch (IllegalArgumentException ex) {
