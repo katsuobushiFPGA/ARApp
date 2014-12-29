@@ -61,6 +61,7 @@ public class MapsActivity extends FragmentActivity {
         progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         progressDialog.setMessage("ルート検索中...");
         progressDialog.hide();
+
     }
 
     @Override
@@ -76,6 +77,7 @@ public class MapsActivity extends FragmentActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        progressDialog.dismiss();
     }
 
     private void setUpMapIfNeeded() {
@@ -162,6 +164,11 @@ public class MapsActivity extends FragmentActivity {
                     Location lc = nowPoint();
                     LatLng lg = new LatLng(lc.getLatitude(),lc.getLongitude());
                     calcDistance((int) (marker.getPosition().latitude * 1E6), (int) (marker.getPosition().longitude * 1E6), marker.getTitle());
+                    if(isNavigation == true) {
+                        mMap.clear();
+                        isNavigation=false;
+                        setDBMarker();
+                    }
                     routeSearch(lg, marker.getPosition());
                     return false;
                 }
