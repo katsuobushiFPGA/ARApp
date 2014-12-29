@@ -1,14 +1,21 @@
 package com.example.hiroto.gpsarapp;
 
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -17,12 +24,29 @@ import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.maps.GeoPoint;
 
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.math.BigDecimal;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public class MapsActivity extends FragmentActivity {
-
+    private static final int MENU_A = 0;
+    private static final int MENU_B = 1;
+    private static final int MENU_c = 2;
+    private static boolean isNavigation = false;
+    public ProgressDialog progressDialog;
+    public String travelMode = "driving";//default
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +56,11 @@ public class MapsActivity extends FragmentActivity {
         setUISettings();//UIを設定
         setUpCamera();//カメラの初期位置を設定
         setDBMarker();//データベースの情報をマーカに設定
+        //プログレス
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progressDialog.setMessage("ルート検索中...");
+        progressDialog.hide();
     }
 
     @Override
@@ -130,7 +159,10 @@ public class MapsActivity extends FragmentActivity {
             mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
                 @Override
                 public boolean onMarkerClick(Marker marker) {
-                    calcDistance((int)(marker.getPosition().latitude*1E6),(int)(marker.getPosition().longitude*1E6),marker.getTitle());
+                    Location lc = nowPoint();
+                    LatLng lg = new LatLng(lc.getLatitude(),lc.getLongitude());
+                    calcDistance((int) (marker.getPosition().latitude * 1E6), (int) (marker.getPosition().longitude * 1E6), marker.getTitle());
+                    routeSearch(lg, marker.getPosition());
                     return false;
                 }
             });
@@ -159,5 +191,151 @@ public class MapsActivity extends FragmentActivity {
         settings.setTiltGesturesEnabled(true);
         // ズームジェスチャー(ピンチイン・アウト)の有効化
         settings.setZoomGesturesEnabled(true);
+    }
+    //----ルート検索用メソッド----
+    private void routeSearch(LatLng origin,LatLng target){
+        progressDialog.show();
+        String url = getDirectionsUrl(origin, target);
+        DownloadTask downloadTask = new DownloadTask();
+        downloadTask.execute(url);
+    }
+    private String getDirectionsUrl(LatLng origin,LatLng target){
+        String str_origin = "origin="+origin.latitude+","+origin.longitude;
+        String str_target = "destination="+target.latitude+","+target.longitude;
+        String sensor = "sensor=false";
+        //パラメータ
+        String parameters = str_origin+"&"+str_target+"&"+sensor + "&language=ja" + "&mode=" + travelMode;
+        //JSON指定
+        String output = "json";
+        String url = "https://maps.googleapis.com/maps/api/directions/"+output+"?"+parameters;
+        return url;
+    }
+
+    private String downloadUrl(String strUrl) throws IOException {
+        String data = "";
+        InputStream iStream = null;
+        HttpURLConnection urlConnection = null;
+        try{
+            URL url = new URL(strUrl);
+            urlConnection = (HttpURLConnection) url.openConnection();
+            urlConnection.connect();
+            iStream = urlConnection.getInputStream();
+            BufferedReader br = new BufferedReader(new InputStreamReader(iStream));
+            StringBuffer sb = new StringBuffer();
+            String line = "";
+            while( ( line = br.readLine()) != null){
+                sb.append(line);
+            }
+            data = sb.toString();
+            br.close();
+        }catch(Exception e){
+            Log.d("Exception while downloading url", e.toString());
+        }finally{
+            iStream.close();
+            urlConnection.disconnect();
+        }
+        return data;
+    }
+
+    private class DownloadTask extends AsyncTask<String, Void, String> {
+        //非同期で取得
+        @Override
+        protected String doInBackground(String... url) {
+            String data = "";
+            try{
+                // Fetching the data from web service
+                data = downloadUrl(url[0]);
+            }catch(Exception e){
+                Log.d("Background Task",e.toString());
+            }
+            return data;
+        }
+        // doInBackground()
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+            ParserTask parserTask = new ParserTask();
+            parserTask.execute(result);
+        }
+    }
+
+    /*parse the Google Places in JSON format */
+    private class ParserTask extends AsyncTask<String, Integer, List<List<HashMap<String,String>>> >{
+        @Override
+        protected List<List<HashMap<String, String>>> doInBackground(String... jsonData) {
+            JSONObject jObject;
+            List<List<HashMap<String, String>>> routes = null;
+            try{
+                jObject = new JSONObject(jsonData[0]);
+                parseJsonpOfDirectionAPI parser = new parseJsonpOfDirectionAPI();
+                routes = parser.parse(jObject);
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+            return routes;
+        }
+
+        //ルート検索で得た座標を使って経路表示
+        @Override
+        protected void onPostExecute(List<List<HashMap<String, String>>> result) {
+            ArrayList<LatLng> points = null;
+            PolylineOptions lineOptions = null;
+            if(result.size() != 0){
+
+                for(int i=0;i<result.size();i++){
+                    points = new ArrayList<LatLng>();
+                    lineOptions = new PolylineOptions();
+                    List<HashMap<String, String>> path = result.get(i);
+                    for(int j=0;j<path.size();j++){
+                        HashMap<String,String> point = path.get(j);
+                        double lat = Double.parseDouble(point.get("lat"));
+                        double lng = Double.parseDouble(point.get("lng"));
+                        LatLng position = new LatLng(lat, lng);
+                        points.add(position);
+                    }
+                    //ポリライン
+                    lineOptions.addAll(points);
+                    lineOptions.width(10);
+                    lineOptions.color(0x550000ff);
+                }
+                //描画
+                mMap.addPolyline(lineOptions);
+                isNavigation=true;
+            }else{
+                Toast.makeText(MapsActivity.this, "ルート情報を取得できませんでした", Toast.LENGTH_LONG).show();
+            }
+            progressDialog.hide();
+        }
+    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        //getMenuInflater().inflate(R.menu.main, menu);
+        menu.add(0, MENU_A,   0, "Info");
+        menu.add(0, MENU_B,   0, "Legal Notices");
+        menu.add(0, MENU_c,   0, "Mode");
+        return true;
+    }
+
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch ( item.getItemId() )
+        {
+            case MENU_A:
+                //show_mapInfo();
+                return true;
+
+            case MENU_B:
+                //Legal Notices(免責事項)
+                String LicenseInfo = GooglePlayServicesUtil.getOpenSourceSoftwareLicenseInfo(getApplicationContext());
+                AlertDialog.Builder LicenseDialog = new AlertDialog.Builder(MapsActivity.this);
+                LicenseDialog.setTitle("Legal Notices");
+                LicenseDialog.setMessage(LicenseInfo);
+                LicenseDialog.show();
+                return true;
+            case MENU_c:
+                //show_settings();
+                return true;
+        }
+        return false;
     }
 }

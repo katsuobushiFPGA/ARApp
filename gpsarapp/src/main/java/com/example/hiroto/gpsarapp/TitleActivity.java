@@ -56,6 +56,8 @@ public class TitleActivity extends Activity implements View.OnClickListener{
             Intent intent = new Intent(TitleActivity.this, MapsActivity.class);
             startActivity(intent);
         }else if (v == button_object){
+            Intent intent = new Intent(TitleActivity.this, TestActivity.class);
+            startActivity(intent);
             Toast.makeText(this, "未実装です", Toast.LENGTH_LONG).show();
             return;
         }else {

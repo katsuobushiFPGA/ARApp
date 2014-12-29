@@ -46,6 +46,10 @@
             android:name=".SpotActivity"
             android:screenOrientation="landscape" >
         </activity>
+        <activity
+            android:name=".TestActivity"
+            android:screenOrientation="landscape" >
+        </activity>
 
 
         <meta-data
