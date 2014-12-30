@@ -93,7 +93,17 @@ public class ARView extends View {
     protected void onDraw(Canvas canvas) {
         Paint paint = new Paint();
         paint.setAntiAlias(true);
+        //ARテキストの描画
+        drawARText(paint, canvas);
+        //ARナビの描画
 
+        // コンパスを描画する
+        drawCompass(canvas, paint,POS_COMPASS_SIZE);
+    }
+    private void drawRouteNavi(Paint paint,Canvas canvas,GPSData gps){
+
+    }
+    private void drawARText(Paint paint ,Canvas canvas) {
         for (int i = 0; i < list.size(); i++) {
             // データの読み込み
             GPSData data = list.get(i);
@@ -140,13 +150,44 @@ public class ARView extends View {
                 drawBalloonText(canvas, paint, info , left, 55);
             }
         }
-
-        // コンパスを描画する
-        drawCompass(canvas, paint,POS_COMPASS_SIZE);
     }
-
     private void drawBalloonText(Canvas canvas, Paint paint, String text,
                                  float left, float top) {
+        // 文字列の幅を取得
+        float textWidth = paint.measureText(text);
+        // フォント情報の取得
+        FontMetrics fontMetrics = paint.getFontMetrics();
+
+        // 文字列の5ポイント外側を囲む座標を求める
+        float bLeft = left - 5;
+        float bRight = left + textWidth + 5;
+        float bTop = top + fontMetrics.ascent - 5;
+        float bBottom = top + fontMetrics.descent + 5;
+
+        // 吹き出しの描画
+        RectF rectF = new RectF(bLeft, bTop, bRight, bBottom);
+        paint.setColor(Color.LTGRAY);
+        paint.setAlpha(128);//透明度の設定
+        canvas.drawRoundRect(rectF, 5, 5, paint);
+
+        // 三角形の描画
+        paint.setStyle(Paint.Style.FILL_AND_STROKE);
+        Path path = new Path();
+        float center = left + textWidth / 2;
+        float triangleSize = paint.getTextSize() / 3;
+        path.moveTo(center, bBottom + triangleSize);
+        path.lineTo(center - triangleSize / 2, bBottom - 1);
+        path.lineTo(center + triangleSize / 2, bBottom - 1);
+        path.lineTo(center, bBottom + triangleSize);
+        canvas.drawPath(path, paint);
+
+        // 文字列の描画
+//        paint.setColor(Color.BLACK);
+        paint.setColor(Color.WHITE);
+        canvas.drawText(text, left, top, paint);
+    }
+    private void drawBalloonArrow(Canvas canvas, Paint paint, String text,
+                                  float left, float top){
         // 文字列の幅を取得
         float textWidth = paint.measureText(text);
         // フォント情報の取得

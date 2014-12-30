@@ -41,12 +41,14 @@ import java.util.HashMap;
 import java.util.List;
 
 public class MapsActivity extends FragmentActivity {
+    //route
     private static final int MENU_A = 0;
     private static final int MENU_B = 1;
     private static final int MENU_c = 2;
     private static boolean isNavigation = false;
     public ProgressDialog progressDialog;
     public String travelMode = "driving";//default
+    public static String posinfo="";
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -50,18 +50,18 @@ public class TitleActivity extends Activity implements View.OnClickListener{
             Intent intent = new Intent(TitleActivity.this, ARActivity.class);
             startActivity(intent);
         }else if (v == button_game){
-            Toast.makeText(this, "未実装です", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "未実装です", Toast.LENGTH_SHORT).show();
             return;
         }else if (v == button_map){
             Intent intent = new Intent(TitleActivity.this, MapsActivity.class);
             startActivity(intent);
         }else if (v == button_object){
-            Intent intent = new Intent(TitleActivity.this, TestActivity.class);
-            startActivity(intent);
-            Toast.makeText(this, "未実装です", Toast.LENGTH_LONG).show();
+//            Intent intent = new Intent(TitleActivity.this, ARActivity.class);
+//            startActivity(intent);
+            Toast.makeText(this, "未実装です", Toast.LENGTH_SHORT).show();
             return;
         }else {
-            Toast.makeText(this, "No detected Button", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "No detected Button", Toast.LENGTH_SHORT).show();
             return;
         }
     }

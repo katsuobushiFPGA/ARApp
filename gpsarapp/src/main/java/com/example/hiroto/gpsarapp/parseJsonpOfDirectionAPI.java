@@ -14,8 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 
 public class parseJsonpOfDirectionAPI {
-
-    TestActivity ma;
+    MapsActivity ma;
 
     public List<List<HashMap<String,String>>> parse(JSONObject jObject){
         String temp = "";
@@ -34,13 +33,9 @@ public class parseJsonpOfDirectionAPI {
 
                 //スタート地点・住所
                 String s_address = (String)((JSONObject)(JSONObject)jsonLegs.get(i)).getString("start_address");
-
-                ma.info_A = s_address;
-
                 //到着地点・住所
                 String e_address = (String)((JSONObject)(JSONObject)jsonLegs.get(i)).getString("end_address");
 
-                ma.info_B = e_address;
 
                 String distance_txt = (String)((JSONObject)((JSONObject)jsonLegs.get(i)).get("distance")).getString("text");
 
