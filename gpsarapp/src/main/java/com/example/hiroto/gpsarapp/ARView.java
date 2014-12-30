@@ -47,7 +47,7 @@ public class ARView extends View {
     private ArrayList<GPSData> list;
 
     // ディスプレイサイズ
-    private int displayX;
+    private int displayX,displayY;
 
     public ARView(Context context, Cursor cursor) {
         super(context);
@@ -59,6 +59,7 @@ public class ARView extends View {
         Display disp = ((WindowManager) context
                 .getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
         displayX = disp.getWidth();
+        displayY =disp.getHeight();
     }
 
     public void readTable(Cursor cursor) {
@@ -96,6 +97,9 @@ public class ARView extends View {
         //ARテキストの描画
         drawARText(paint, canvas);
         //ARナビの描画
+
+        //AR矢印(テスト)の描画
+        drawBalloonArrow(canvas,paint,displayX / 2 ,displayY * 2 / 3 ,8);
 
         // コンパスを描画する
         drawCompass(canvas, paint,POS_COMPASS_SIZE);
@@ -186,38 +190,19 @@ public class ARView extends View {
         paint.setColor(Color.WHITE);
         canvas.drawText(text, left, top, paint);
     }
-    private void drawBalloonArrow(Canvas canvas, Paint paint, String text,
-                                  float left, float top){
-        // 文字列の幅を取得
-        float textWidth = paint.measureText(text);
-        // フォント情報の取得
-        FontMetrics fontMetrics = paint.getFontMetrics();
-
-        // 文字列の5ポイント外側を囲む座標を求める
-        float bLeft = left - 5;
-        float bRight = left + textWidth + 5;
-        float bTop = top + fontMetrics.ascent - 5;
-        float bBottom = top + fontMetrics.descent + 5;
-
-        // 吹き出しの描画
-        RectF rectF = new RectF(bLeft, bTop, bRight, bBottom);
-        paint.setColor(Color.LTGRAY);
-        canvas.drawRoundRect(rectF, 5, 5, paint);
-
-        // 三角形の描画
-        paint.setStyle(Paint.Style.FILL_AND_STROKE);
+    private void drawBalloonArrow(Canvas canvas, Paint paint,float x,float y,float size){
         Path path = new Path();
-        float center = left + textWidth / 2;
-        float triangleSize = paint.getTextSize() / 3;
-        path.moveTo(center, bBottom + triangleSize);
-        path.lineTo(center - triangleSize / 2, bBottom - 1);
-        path.lineTo(center + triangleSize / 2, bBottom - 1);
-        path.lineTo(center, bBottom + triangleSize);
+        path.moveTo(x, y - 5 * (float)size);//頂点
+        path.lineTo(x + 10 * (float)size, y + 10 * (float)size);//左の頂点
+        path.lineTo(x + 4 * (float)size, y + 10 * (float)size);//左2の頂点
+        path.lineTo(x + 4 * (float)size, y + 20 * (float)size);//左2下の頂点
+        path.lineTo(x - 4 * (float)size, y + 20 * (float)size);//右2下の頂点
+        path.lineTo(x - 4 * (float)size, y + 10 * (float)size);//右2の頂点
+        path.lineTo(x - 10 * (float)size, y + 10 * (float)size);//右の頂点
+        path.moveTo(x, y - 5 * (float)size);
+        paint.setColor(Color.BLUE);
+        paint.setAlpha(80);
         canvas.drawPath(path, paint);
-
-        // 文字列の描画
-        paint.setColor(Color.WHITE);
-        canvas.drawText(text, left, top, paint);
     }
 
     //タッチイベントの処理
