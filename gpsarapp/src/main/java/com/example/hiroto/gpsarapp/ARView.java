@@ -32,6 +32,9 @@ public class ARView extends View {
     // ここでは10kmほどに指定する
     private final float VIEW_LIMIT = 100000;
 
+    //ルートポイントにN メートル近くなったら消す。
+    private final float ROUTE_MARKER_LIMIT = 10;
+
     // コンパスの描画位置および大きさを指定する
     private final float POS_COMPASSX = 40;
     private final float POS_COMPASSY = 40;

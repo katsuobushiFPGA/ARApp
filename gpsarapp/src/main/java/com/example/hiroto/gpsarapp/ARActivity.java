@@ -12,6 +12,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.View;
@@ -48,6 +49,10 @@ public class ARActivity extends Activity implements SensorEventListener,
     private static final int BUTTON_SIZE = 80;
     EditText editText;
 
+    //ナビゲーション用フィールド
+    private int navi_lat;
+    private int navi_lng;
+    private String navi_info;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -94,11 +99,15 @@ public class ARActivity extends Activity implements SensorEventListener,
                 LayoutParams.FILL_PARENT));
         addContentView(layout, new LayoutParams(LayoutParams.FILL_PARENT,
                 LayoutParams.FILL_PARENT));
+
+
+
     }
 
     @Override
     public void onStart() {
         super.onStart();
+
     }
 
     @Override
@@ -113,6 +122,14 @@ public class ARActivity extends Activity implements SensorEventListener,
                 SensorManager.SENSOR_DELAY_NORMAL);
         sensorManager.registerListener(this, listAcc.get(0),
                 SensorManager.SENSOR_DELAY_NORMAL);
+        Log.d("ONRESUME:", "TEST");
+        Log.d("FLAG:", String.valueOf(NavigationManager.getNavigationFlag()));
+
+        //ナビゲーション用
+        if(NavigationManager.getNavigationFlag()) {
+            Log.d("TEST", String.valueOf(NavigationManager.getRoute()));//最初の要素が入る。
+            Log.d("TEST", String.valueOf(NavigationManager.getPosinfo()));//最初の要素が入る。
+        }
     }
 
     @Override
@@ -211,7 +228,5 @@ public class ARActivity extends Activity implements SensorEventListener,
     @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {
     }
-
-
 
 }

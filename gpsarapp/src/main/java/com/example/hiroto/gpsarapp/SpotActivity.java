@@ -5,16 +5,29 @@ import android.content.Intent;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.maps.GeoPoint;
 
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.math.BigDecimal;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by hiroto on 2014/12/26.
@@ -71,9 +84,17 @@ public class SpotActivity extends Activity implements View.OnClickListener{
     public void onClick(View v) {
         if(v == navi){
             Toast.makeText(this, "未実装です,遷移します.", Toast.LENGTH_SHORT).show();
+            GeoPoint geo = new GeoPoint(lat,lng);
+            double lat_target = geo.getLatitudeE6() / 1E6;
+            double lng_target = geo.getLongitudeE6() / 1E6;
+
+            //現在地の緯度、経度の精度がデータベースと合わないので変換
+            double lat_now = ((int)(nowPoint().getLatitude() * 1E6) / 1E6);
+            double lng_now = ((int)(nowPoint().getLongitude() * 1E6) / 1E6);
+
             //ここでナビゲーションの設定をする。3Dナビの実装が必要。および2Dマップでも必要。
-//            Intent intent = new Intent(SpotActivity.this, ARActivity.class);
-//            startActivity(intent);
+            routeSearch(new LatLng(lat_now, lng_now), new LatLng(lat_target,lng_target));
+            finish();
         }else if(v == distance) {
             calcDistance(lat,lng,info);//現在地からの距離を計算
         }else {
@@ -120,6 +141,88 @@ public class SpotActivity extends Activity implements View.OnClickListener{
             }
         } catch (IllegalArgumentException ex) {
             Toast.makeText(this,"IllegalArgumentException" ,Toast.LENGTH_SHORT).show();
+        }
+    }
+    //----ルート検索用メソッド----
+    private void routeSearch(LatLng origin,LatLng target){
+        String url = getDirectionsUrl(origin, target);
+        DownloadTask downloadTask = new DownloadTask();
+        downloadTask.execute(url);
+    }
+    private String getDirectionsUrl(LatLng origin,LatLng target){
+        String str_origin = "origin="+origin.latitude+","+origin.longitude;
+        String str_target = "destination="+target.latitude+","+target.longitude;
+        String sensor = "sensor=false";
+        //パラメータ
+        String parameters = str_origin+"&"+str_target+"&"+sensor + "&language=ja" + "&mode=" + NavigationManager.getTravelMode();
+        //JSON指定
+        String output = "json";
+        String url = "https://maps.googleapis.com/maps/api/directions/"+output+"?"+parameters;
+        return url;
+    }
+
+    private String downloadUrl(String strUrl) throws IOException {
+        String data = "";
+        InputStream iStream = null;
+        HttpURLConnection urlConnection = null;
+        try{
+            URL url = new URL(strUrl);
+            urlConnection = (HttpURLConnection) url.openConnection();
+            urlConnection.connect();
+            iStream = urlConnection.getInputStream();
+            BufferedReader br = new BufferedReader(new InputStreamReader(iStream));
+            StringBuffer sb = new StringBuffer();
+            String line = "";
+            while( ( line = br.readLine()) != null){
+                sb.append(line);
+            }
+            data = sb.toString();
+            br.close();
+        }catch(Exception e){
+            Log.d("Exception while downloading url", e.toString());
+        }finally{
+            iStream.close();
+            urlConnection.disconnect();
+        }
+        return data;
+    }
+
+    private class DownloadTask extends AsyncTask<String, Void, String> {
+        //非同期で取得
+        @Override
+        protected String doInBackground(String... url) {
+            String data = "";
+            try{
+                // Fetching the data from web service
+                data = downloadUrl(url[0]);
+            }catch(Exception e){
+                Log.d("Background Task",e.toString());
+            }
+            return data;
+        }
+        // doInBackground()
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+            ParserTask parserTask = new ParserTask();
+            parserTask.execute(result);
+        }
+    }
+
+    /*parse the Google Places in JSON format */
+    private class ParserTask extends AsyncTask<String, Integer, List<List<HashMap<String,String>>> >{
+        @Override
+        protected List<List<HashMap<String, String>>> doInBackground(String... jsonData) {
+            JSONObject jObject;
+            List<List<HashMap<String, String>>> routes = null;
+            try{
+                jObject = new JSONObject(jsonData[0]);
+                parseJsonpOfDirectionAPI parser = new parseJsonpOfDirectionAPI();
+                routes = parser.parse(jObject);
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+            return routes;
         }
     }
 }

@@ -3,6 +3,7 @@ package com.example.hiroto.gpsarapp;
 /**
  * Created by hiroto on 2014/12/29.
  */
+
 import com.google.android.gms.maps.model.LatLng;
 
 import org.json.JSONArray;
@@ -14,7 +15,6 @@ import java.util.HashMap;
 import java.util.List;
 
 public class parseJsonpOfDirectionAPI {
-    MapsActivity ma;
 
     public List<List<HashMap<String,String>>> parse(JSONObject jObject){
         String temp = "";
@@ -77,16 +77,17 @@ public class parseJsonpOfDirectionAPI {
                     //ルート座標
                     routes.add(path);
                 }
-
                 //ルート情報
-                ma.posinfo = temp;
+                NavigationManager.setPosInfo(temp);
+//                Log.d("ROUTE",MapsActivity.posinfo);//ルート情報の表示（行き方)
             }
 
         } catch (JSONException e) {
             e.printStackTrace();
         }catch (Exception e){
         }
-
+        NavigationManager.setRoute(routes);
+        NavigationManager.setNavigationFlag(true);
         return routes;
     }
 

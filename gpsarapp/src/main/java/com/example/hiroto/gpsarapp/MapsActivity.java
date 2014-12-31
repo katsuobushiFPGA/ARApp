@@ -1,6 +1,5 @@
 package com.example.hiroto.gpsarapp;
 
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -11,11 +10,8 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -42,13 +38,8 @@ import java.util.List;
 
 public class MapsActivity extends FragmentActivity {
     //route
-    private static final int MENU_A = 0;
-    private static final int MENU_B = 1;
-    private static final int MENU_c = 2;
-    private static boolean isNavigation = false;
     public ProgressDialog progressDialog;
     public String travelMode = "driving";//default
-    public static String posinfo="";
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -166,9 +157,11 @@ public class MapsActivity extends FragmentActivity {
                     Location lc = nowPoint();
                     LatLng lg = new LatLng(lc.getLatitude(),lc.getLongitude());
                     calcDistance((int) (marker.getPosition().latitude * 1E6), (int) (marker.getPosition().longitude * 1E6), marker.getTitle());
-                    if(isNavigation == true) {
+                    if(NavigationManager.getNavigationFlag() == true) {
                         mMap.clear();
-                        isNavigation=false;
+                        Log.d("ROUTE:POSINFO", NavigationManager.getPosinfo());
+                        Log.d("ROUTE:ROUTEPATH",String.valueOf(NavigationManager.getRoute()));
+                        NavigationManager.setNavigationFlag(false);
                         setDBMarker();
                     }
                     routeSearch(lg, marker.getPosition());
@@ -309,42 +302,12 @@ public class MapsActivity extends FragmentActivity {
                 }
                 //描画
                 mMap.addPolyline(lineOptions);
-                isNavigation=true;
+
             }else{
                 Toast.makeText(MapsActivity.this, "ルート情報を取得できませんでした", Toast.LENGTH_LONG).show();
             }
             progressDialog.hide();
         }
     }
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        //getMenuInflater().inflate(R.menu.main, menu);
-        menu.add(0, MENU_A,   0, "Info");
-        menu.add(0, MENU_B,   0, "Legal Notices");
-        menu.add(0, MENU_c,   0, "Mode");
-        return true;
-    }
 
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch ( item.getItemId() )
-        {
-            case MENU_A:
-                //show_mapInfo();
-                return true;
-
-            case MENU_B:
-                //Legal Notices(免責事項)
-                String LicenseInfo = GooglePlayServicesUtil.getOpenSourceSoftwareLicenseInfo(getApplicationContext());
-                AlertDialog.Builder LicenseDialog = new AlertDialog.Builder(MapsActivity.this);
-                LicenseDialog.setTitle("Legal Notices");
-                LicenseDialog.setMessage(LicenseInfo);
-                LicenseDialog.show();
-                return true;
-            case MENU_c:
-                //show_settings();
-                return true;
-        }
-        return false;
-    }
 }
