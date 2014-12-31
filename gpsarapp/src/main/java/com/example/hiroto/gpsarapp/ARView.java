@@ -13,6 +13,7 @@ import android.graphics.Paint;
 import android.graphics.Paint.FontMetrics;
 import android.graphics.Path;
 import android.graphics.RectF;
+import android.util.Log;
 import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
@@ -21,6 +22,10 @@ import android.view.WindowManager;
 import com.google.android.maps.GeoPoint;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 //public class ARView extends SurfaceView implements SurfaceHolder.Callback {
 public class ARView extends View {
@@ -46,6 +51,8 @@ public class ARView extends View {
     // 現在地を保持する変数
     int posx, posy;
 
+    //ナビ用方向保持変数
+    float directionNavi;
     // ARテキストの情報を保持するオブジェクト
     private ArrayList<GPSData> list;
 
@@ -100,15 +107,63 @@ public class ARView extends View {
         //ARテキストの描画
         drawARText(paint, canvas);
         //ARナビの描画
-
+        if(NavigationManager.getNavigationFlag()==true)
+            drawRouteNavi(paint,canvas);
         //AR矢印(テスト)の描画
-        drawBalloonArrow(canvas,paint,displayX / 2 ,displayY * 2 / 3 ,8);
-
+//        drawBalloonArrow(canvas,paint,displayX / 2 ,displayY * 2 / 3 ,8);
         // コンパスを描画する
         drawCompass(canvas, paint,POS_COMPASS_SIZE);
     }
-    private void drawRouteNavi(Paint paint,Canvas canvas,GPSData gps){
+    private void drawRouteNavi(Paint paint,Canvas canvas){
+        HashMap<String,String> hm = new HashMap<String,String>();
+        //判定するパターンを生成
+        Pattern p = Pattern.compile("[0-9]+[.]?[0-9]+");
+        List<String> latlng_ = new ArrayList<>();
+        //ナビゲーション用
+            //sizeが0ならflagをfalseに
+            if(NavigationManager.getRoute().size() == 0) {
+                NavigationManager.setNavigationFlag(false);
+            }
+//            Log.d("TEST", String.valueOf(NavigationManager.getRoute()));//最初の要素が入る。
+//            Log.d("TEST", String.valueOf(NavigationManager.getPosinfo()));//最初の要素が入る。
 
+                String tmp = NavigationManager.getRoute().get(0).get(0).values().toString();//lat
+                Log.d("tmp",tmp);
+                Matcher m = p.matcher(tmp);
+            while(m.find()){
+                latlng_.add(m.group());//1要素目にlng , 2要素目にlat
+            }
+                double a =  Double.valueOf(latlng_.get(0))*1E6;
+                double b =  Double.valueOf(latlng_.get(1))*1E6;
+                int y = (int)b;//latitude
+                int x = (int)a;//longitude
+
+                // チェックポイントとの距離を求める
+                double dx = (x - posx);
+                double dy = (y - posy);
+                float distance = (float) Math.sqrt(Math.pow(dy, 2) + Math.pow(dx, 2));
+
+                // 距離が一定以上近づいたら、次の座標の処理を行う
+                if (distance <= ROUTE_MARKER_LIMIT) {
+                        NavigationManager.getRoute().get(0).remove(0);
+                        drawRouteNavi(paint, canvas);
+                }
+                // ポイントと現在地のなす角を求めて正規化する
+                double angle = Math.atan2(dy, dx);
+                float degree = (float) Math.toDegrees(angle);
+                degree = -degree + 90;
+                if (degree < 0)
+                    degree = 360 + degree;
+                // 端末の向きとポイントとの角度の差を求める
+                float sub = degree - direction;
+                if (sub < -180.0)
+                    sub += 360;
+                if (sub > 180.0)
+                    sub -= 360;
+
+                directionNavi=sub;
+                drawBalloonArrow(canvas, paint, displayX / 2, displayY * 2 / 3, 8);//矢印の描画
+                invalidate();
     }
     private void drawARText(Paint paint ,Canvas canvas) {
         for (int i = 0; i < list.size(); i++) {
@@ -195,17 +250,19 @@ public class ARView extends View {
     }
     private void drawBalloonArrow(Canvas canvas, Paint paint,float x,float y,float size){
         Path path = new Path();
-        path.moveTo(x, y - 5 * (float)size);//頂点
-        path.lineTo(x + 10 * (float)size, y + 10 * (float)size);//左の頂点
+        path.moveTo(x, y - 5 * (float) size);//頂点
+        path.lineTo(x + 10 * (float) size, y + 10 * (float) size);//左の頂点
         path.lineTo(x + 4 * (float)size, y + 10 * (float)size);//左2の頂点
         path.lineTo(x + 4 * (float)size, y + 20 * (float)size);//左2下の頂点
         path.lineTo(x - 4 * (float)size, y + 20 * (float)size);//右2下の頂点
         path.lineTo(x - 4 * (float)size, y + 10 * (float)size);//右2の頂点
-        path.lineTo(x - 10 * (float)size, y + 10 * (float)size);//右の頂点
-        path.moveTo(x, y - 5 * (float)size);
+        path.lineTo(x - 10 * (float) size, y + 10 * (float) size);//右の頂点
+        path.moveTo(x, y - 5 * (float) size);
         paint.setColor(Color.BLUE);
         paint.setAlpha(80);
+        canvas.rotate(-directionNavi, x, y);
         canvas.drawPath(path, paint);
+        canvas.rotate( directionNavi, x, y);
     }
 
     //タッチイベントの処理
@@ -301,4 +358,5 @@ public class ARView extends View {
         // onDrawを呼び出して再描画
         invalidate();
     }
+
 }

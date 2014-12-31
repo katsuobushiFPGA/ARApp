@@ -125,11 +125,7 @@ public class ARActivity extends Activity implements SensorEventListener,
         Log.d("ONRESUME:", "TEST");
         Log.d("FLAG:", String.valueOf(NavigationManager.getNavigationFlag()));
 
-        //ナビゲーション用
-        if(NavigationManager.getNavigationFlag()) {
-            Log.d("TEST", String.valueOf(NavigationManager.getRoute()));//最初の要素が入る。
-            Log.d("TEST", String.valueOf(NavigationManager.getPosinfo()));//最初の要素が入る。
-        }
+
     }
 
     @Override

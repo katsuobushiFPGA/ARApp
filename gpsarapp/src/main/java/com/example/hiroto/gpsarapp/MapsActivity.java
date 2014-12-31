@@ -302,7 +302,6 @@ public class MapsActivity extends FragmentActivity {
                 }
                 //描画
                 mMap.addPolyline(lineOptions);
-
             }else{
                 Toast.makeText(MapsActivity.this, "ルート情報を取得できませんでした", Toast.LENGTH_LONG).show();
             }
