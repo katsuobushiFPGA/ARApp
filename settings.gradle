@@ -1,1 +1,1 @@
-include ':app', ':gpsarapp'
+include ':app', ':gpsarapp', ':charadisp3d'

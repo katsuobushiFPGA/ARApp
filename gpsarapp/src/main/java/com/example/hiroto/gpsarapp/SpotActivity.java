@@ -145,6 +145,7 @@ public class SpotActivity extends Activity implements View.OnClickListener{
     }
     //----ルート検索用メソッド----
     private void routeSearch(LatLng origin,LatLng target){
+        NavigationManager.setTarget(target);
         String url = getDirectionsUrl(origin, target);
         DownloadTask downloadTask = new DownloadTask();
         downloadTask.execute(url);

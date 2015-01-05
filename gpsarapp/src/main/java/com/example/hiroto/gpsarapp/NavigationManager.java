@@ -1,5 +1,7 @@
 package com.example.hiroto.gpsarapp;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import java.util.HashMap;
 import java.util.List;
 
@@ -9,9 +11,10 @@ import java.util.List;
 public final class NavigationManager {
     private static boolean isNavigation;
     //ナビゲーション用
-    private static String posinfo;
-    private static List<List<HashMap<String,String>>> route;
-    private static String travelMode="driving";
+    private static LatLng target;//目的地
+    private static String posinfo;//ナビゲーション,ルート情報
+    private static List<List<HashMap<String,String>>> route;//ナビゲーション経路の緯度経度
+    private static String travelMode="driving";//ナビゲーションモード
 
     //インスタンスをつくらせないようにする。
     private NavigationManager(){};
@@ -42,5 +45,11 @@ public final class NavigationManager {
     }
     public static String getTravelMode(){
         return travelMode;
+    }
+    public static void setTarget(LatLng t) {
+        target = t;
+    }
+    public static LatLng getTarget() {
+        return target;
     }
 }

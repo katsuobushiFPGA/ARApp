@@ -54,6 +54,11 @@ public class MapsActivity extends FragmentActivity {
         progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         progressDialog.setMessage("ルート検索中...");
         progressDialog.hide();
+        if(NavigationManager.getNavigationFlag()) {
+            Location loc = nowPoint();
+            LatLng l = new LatLng(loc.getLatitude(),loc.getLongitude());
+            routeSearch(l,NavigationManager.getTarget());
+        }
 
     }
 
@@ -197,6 +202,7 @@ public class MapsActivity extends FragmentActivity {
     //----ルート検索用メソッド----
     private void routeSearch(LatLng origin,LatLng target){
         progressDialog.show();
+        NavigationManager.setTarget(target);
         String url = getDirectionsUrl(origin, target);
         DownloadTask downloadTask = new DownloadTask();
         downloadTask.execute(url);
