@@ -1,1 +1,1 @@
-include ':app', ':gpsarapp', ':charadisp3d'
+include ':app', ':gpsarapp', ':charadisp3d', ':gl20modelview'
