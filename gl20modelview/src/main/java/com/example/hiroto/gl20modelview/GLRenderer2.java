@@ -110,10 +110,17 @@ public class GLRenderer2 implements
                 0.0f,0.8f,5.0f, //カメラの視点
                 0.0f,0.8f,0.0f, //カメラの焦点
                 0.0f,1.0f,0.0f);//カメラの上方向
-
-        //モデル変換
-        Matrix.rotateM(GLES.mMatrix,0,0,0,1,0);
+        animationWalk();
         tick++;
+
+        //モデルの描画
+        model.draw();
+    }
+    private void animationWalk() {
+        //モデル変換
+//        Matrix.translateM(GLES.mMatrix,0,-2.0f,0f,0); //座標移動
+        Matrix.rotateM(GLES.mMatrix,0,0,0,1,0);
+
         //左手・右足
         int rotate=tick%180;
         rotate=(rotate<90)?rotate-45:180-45-rotate;
@@ -125,8 +132,5 @@ public class GLRenderer2 implements
         rotate=(rotate<90)?rotate-45:180-45-rotate;
         handR.rotate.x=rotate;
         legL.rotate.x=rotate;
-
-        //モデルの描画
-        model.draw();
     }
 }
