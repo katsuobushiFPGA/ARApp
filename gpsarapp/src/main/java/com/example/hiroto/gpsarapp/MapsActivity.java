@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -47,8 +48,7 @@ public class MapsActivity extends FragmentActivity  implements LocationListener 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mLocationManager = (LocationManager)this. getSystemService(Context.LOCATION_SERVICE);
-        mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
+        GPSCalibration();
         setContentView(R.layout.activity_maps_activity);
         setUpMapIfNeeded();//インスタンスをmMapで取得
         setUISettings();//UIを設定
@@ -71,8 +71,7 @@ public class MapsActivity extends FragmentActivity  implements LocationListener 
     protected void onResume() {
         super.onResume();
         setUpMapIfNeeded();
-        mLocationManager = (LocationManager)this. getSystemService(Context.LOCATION_SERVICE);
-        mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
+        GPSCalibration();
 
         //  locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0,0,this); //建物内だと取得しにくいのでネットワークにする。
     }
@@ -90,7 +89,21 @@ public class MapsActivity extends FragmentActivity  implements LocationListener 
         super.onDestroy();
         progressDialog.dismiss();
     }
+    private void GPSCalibration() {
+        mLocationManager = (LocationManager)this. getSystemService(Context.LOCATION_SERVICE);
+        Criteria criteria = new Criteria();
+        criteria.setAccuracy(Criteria.ACCURACY_FINE);
+        criteria.setCostAllowed(true);
+        String providerName = mLocationManager.getBestProvider(criteria, true);
 
+        // If no suitable provider is found, null is returned.
+        if (providerName != null) {
+            mLocationManager.requestLocationUpdates(providerName, 0, 0, this);
+        } else {
+            Toast.makeText(this, "GPS情報を取得できませんでした。\nもう一度取得します。", Toast.LENGTH_SHORT).show();
+            GPSCalibration();
+        }
+    }
     private void setUpMapIfNeeded() {
         // Do a null check to confirm that we have not already instantiated the map.
         if (mMap == null) {
@@ -107,7 +120,12 @@ public class MapsActivity extends FragmentActivity  implements LocationListener 
         mMap.addMarker(new MarkerOptions().position(new LatLng(latitude,longitude)).title(name));
     }
     private Location nowPoint() {
-        Location location = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+        Location location;
+        if(mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER) != null) {
+            location = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        } else {
+            location = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+        }
         return location;
     }
     private void setUpCamera() {

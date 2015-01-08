@@ -1,9 +1,11 @@
 package com.example.hiroto.gpsarapp;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.location.Criteria;
 import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -32,7 +34,7 @@ import java.util.List;
 /**
  * Created by hiroto on 2014/12/26.
  */
-public class SpotActivity extends Activity implements View.OnClickListener{
+public class SpotActivity extends Activity implements View.OnClickListener , LocationListener{
     private ImageView image;
     private TextView text;
     private Button navi;
@@ -40,10 +42,13 @@ public class SpotActivity extends Activity implements View.OnClickListener{
     private int lat;
     private int lng;
     private String info;
+    private LocationManager mLocationManager;//locationManager
+
     @Override
     public void onCreate(Bundle savedInstance) {
         super.onCreate(savedInstance);
         setContentView(R.layout.activity_spot);
+        GPSCalibration();
 
         Intent i = getIntent();//呼び出し元のintentを取得
 
@@ -102,11 +107,28 @@ public class SpotActivity extends Activity implements View.OnClickListener{
         }
     }
     private Location nowPoint() {
-        LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-        Criteria criteria = new Criteria();
-        String provider = locationManager.getBestProvider(criteria, true);
-        Location location = locationManager.getLastKnownLocation(provider);
+        Location location;
+        if(mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER) != null) {
+            location = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        } else {
+            location = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+        }
         return location;
+    }
+    private void GPSCalibration() {
+        mLocationManager = (LocationManager)this. getSystemService(Context.LOCATION_SERVICE);
+        Criteria criteria = new Criteria();
+        criteria.setAccuracy(Criteria.ACCURACY_FINE);
+        criteria.setCostAllowed(true);
+        String providerName = mLocationManager.getBestProvider(criteria, true);
+
+        // If no suitable provider is found, null is returned.
+        if (providerName != null) {
+            mLocationManager.requestLocationUpdates(providerName, 0, 0, this);
+        } else {
+            Toast.makeText(this, "GPS情報を取得できませんでした。\nもう一度取得します。", Toast.LENGTH_SHORT).show();
+            GPSCalibration();
+        }
     }
     private void calcDistance(int latitude,int longitude, String info) {
         float[] results = new float[3];
@@ -225,5 +247,26 @@ public class SpotActivity extends Activity implements View.OnClickListener{
             }
             return routes;
         }
+    }
+    //Location Listener
+    //センサーオーバライドメソッド
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras)
+    {
+    }
+
+    @Override
+    public void onProviderEnabled(String provider)
+    {
+    }
+
+    @Override
+    public void onProviderDisabled(String provider)
+    {
+    }
+
+    @Override
+    public void onLocationChanged(Location location)
+    {
     }
 }
