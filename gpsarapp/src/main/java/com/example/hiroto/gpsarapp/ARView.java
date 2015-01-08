@@ -13,7 +13,6 @@ import android.graphics.Paint;
 import android.graphics.Paint.FontMetrics;
 import android.graphics.Path;
 import android.graphics.RectF;
-import android.util.Log;
 import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
@@ -128,7 +127,7 @@ public class ARView extends View {
 //            Log.d("TEST", String.valueOf(NavigationManager.getPosinfo()));//最初の要素が入る。
 
                 String tmp = NavigationManager.getRoute().get(0).get(0).values().toString();//lat
-                Log.d("tmp",tmp);
+//                Log.d("tmp",tmp);
                 Matcher m = p.matcher(tmp);
             while(m.find()){
                 latlng_.add(m.group());//1要素目にlng , 2要素目にlat

@@ -30,6 +30,9 @@ public class GLRenderer2 implements
         GLES.context=context;
     }
 
+    //
+    private boolean isHandUpdFlag = false;
+
     //サーフェイス生成時に呼ばれる
     @Override
     public void onSurfaceCreated(GL10 gl10,EGLConfig eglConfig) {
@@ -110,11 +113,27 @@ public class GLRenderer2 implements
                 0.0f,0.8f,5.0f, //カメラの視点
                 0.0f,0.8f,0.0f, //カメラの焦点
                 0.0f,1.0f,0.0f);//カメラの上方向
-        animationWalk();
+//        animationWalk();
+        animationHandUp(0,90,0);
         tick++;
 
         //モデルの描画
         model.draw();
+    }
+    private void animationHandUp(int mode,int degree,int ticRev) {
+        int rotate = 0;
+        if(!isHandUpdFlag) {
+            if(ticRev == 0) {
+                if (mode == 0) {
+                    rotate = tick % degree + 1;
+                    if (rotate == degree) {
+                        isHandUpdFlag = true;
+                    }
+                    handL.rotate.x = rotate;
+                    handR.rotate.x = rotate;
+                }
+            }
+        }
     }
     private void animationWalk() {
         //モデル変換

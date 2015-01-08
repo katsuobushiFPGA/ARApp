@@ -49,10 +49,6 @@ public class ARActivity extends Activity implements SensorEventListener,
     private static final int BUTTON_SIZE = 80;
     EditText editText;
 
-    //ナビゲーション用フィールド
-    private int navi_lat;
-    private int navi_lng;
-    private String navi_info;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -115,7 +111,7 @@ public class ARActivity extends Activity implements SensorEventListener,
         super.onResume();
         // ロケーションマネージャの設定
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0,
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, //建物内だと取得しにくいのでネットワークにする。
                 0, this);
         // センサー処理の登録
         sensorManager.registerListener(this, listMag.get(0),
