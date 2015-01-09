@@ -31,4 +31,11 @@
         android:id="@+id/button_gamemode"
         android:layout_gravity="right|center_vertical" />
 
+    <Button
+        android:layout_width="320dp"
+        android:layout_height="180dp"
+        android:text="場所を追加する"
+        android:id="@+id/button_place"
+        android:layout_gravity="right|top" />
+
 </FrameLayout>

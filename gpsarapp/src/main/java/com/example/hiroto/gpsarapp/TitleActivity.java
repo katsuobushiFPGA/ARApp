@@ -15,6 +15,7 @@ public class TitleActivity extends Activity implements View.OnClickListener{
     Button button_game;
     Button button_map;
     Button button_object;
+    Button button_place;
 
     @Override
     public void onCreate(Bundle savedInstance) {
@@ -24,10 +25,14 @@ public class TitleActivity extends Activity implements View.OnClickListener{
         button_game = (Button)findViewById(R.id.button_gamemode);
         button_map  = (Button)findViewById(R.id.button_map);
         button_object  = (Button)findViewById(R.id.button_object);
+        button_place = (Button)findViewById(R.id.button_place);
+
         button_gps.setOnClickListener(this);
         button_game.setOnClickListener(this);
         button_map.setOnClickListener(this);
         button_object.setOnClickListener(this);
+        button_place.setOnClickListener(this);
+
         startService(new Intent(TitleActivity.this, DBService.class));
     }
     @Override
@@ -60,6 +65,9 @@ public class TitleActivity extends Activity implements View.OnClickListener{
 //            startActivity(intent);
             Toast.makeText(this, "未実装です", Toast.LENGTH_SHORT).show();
             return;
+        }else if(v == button_place) {
+            Intent intent = new Intent(TitleActivity.this, SearchRegisterActivity.class);
+            startActivity(intent);
         }else {
             Toast.makeText(this, "No detected Button", Toast.LENGTH_SHORT).show();
             return;

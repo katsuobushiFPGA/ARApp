@@ -52,4 +52,5 @@ public final class NavigationManager {
     public static LatLng getTarget() {
         return target;
     }
+
 }

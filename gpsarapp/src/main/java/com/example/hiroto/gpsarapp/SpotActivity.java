@@ -88,7 +88,7 @@ public class SpotActivity extends Activity implements View.OnClickListener , Loc
     @Override
     public void onClick(View v) {
         if(v == navi){
-            Toast.makeText(this, "未実装です,遷移します.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "ナビを開始します.\n下の矢印に沿って歩いてください.", Toast.LENGTH_SHORT).show();
             GeoPoint geo = new GeoPoint(lat,lng);
             double lat_target = geo.getLatitudeE6() / 1E6;
             double lng_target = geo.getLongitudeE6() / 1E6;

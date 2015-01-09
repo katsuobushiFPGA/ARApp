@@ -127,6 +127,12 @@ public class DBService extends Service {
         values.put("image","kitasenju_station");
         values.put("description", "kitasenju_station");
         db.insert(DB_TABLE, "", values);
+        values.put("info", "足立区中央図書館");
+        values.put("latitude", 35756542);
+        values.put("longitude", 139802675);
+        values.put("image","adachi_library");
+        values.put("description", "adachi_library");
+        db.insert(DB_TABLE, "", values);
     }
     //SQLクラス
     public class SQLiteOpenHelperEx extends SQLiteOpenHelper {

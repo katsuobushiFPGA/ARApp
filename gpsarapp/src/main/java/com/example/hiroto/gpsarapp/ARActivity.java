@@ -209,7 +209,6 @@ public class ARActivity extends Activity implements SensorEventListener,
             DBService.cursor = DBService.db.query(DBService.DB_TABLE, new String[] { "info", "latitude",
                     "longitude","image","description" }, null, null, null, null, null);
             arView.readTable(DBService.cursor);
-//            DBService.cursor.close();
             editText.setText("");
             Toast.makeText(this, "テキストが登録されました", Toast.LENGTH_LONG).show();
         }

@@ -43,15 +43,19 @@
                                    1958年10月14日竣工、同年12月23日に完工式が開かれた。\n
                                    東京のシンボル・観光名所として知られる。\n
                                    正式名称は日本電波塔（にっぽんでんぱとう）。\n</string>
-    <string name ="tokyo_denki_university">東京電機大学（とうきょうでんきだいがく、英語: Tokyo Denki University）は、\n
+    <string name="tokyo_denki_university">東京電機大学（とうきょうでんきだいがく、英語: Tokyo Denki University）は、\n
                                                  東京都足立区千住旭町5に本部を置く日本の私立大学である。1949年に設置された。\n
                                                  大学の略称は電大、電機大、TDU。\n</string>
-    <string name ="rainbow_bridge">レインボーブリッジ（Rainbow Bridge）は、東京都の港区芝浦地区と台場地区（港区台場および江東区有明）を結ぶ吊り橋。\n
+    <string name="rainbow_bridge">レインボーブリッジ（Rainbow Bridge）は、東京都の港区芝浦地区と台場地区（港区台場および江東区有明）を結ぶ吊り橋。\n
                                         1987年（昭和62年）着工、1993年（平成5年）竣工、同年8月26日開通。\n
                                         「レインボーブリッジ」の名前は一般公募により決められたもので、正式名称は「東京港連絡橋」である。\n</string>
-    <string name ="kitasenju_station">北千住駅（きたせんじゅえき）は、東京都足立区千住旭町および千住二丁目にある、\n
+    <string name="kitasenju_station">北千住駅（きたせんじゅえき）は、東京都足立区千住旭町および千住二丁目にある、\n
                                            東日本旅客鉄道（JR東日本）・東京地下鉄（東京メトロ）・東武鉄道・首都圏新都市鉄道の駅である。\n</string>
+    <string name="adachi_library">足立区立中央図書館（あだちくりつ ちゅうおうとしょかん）は、東京都足立区千住五丁目にある公共図書館。\n
+                                       都営集合住宅の入る高層ビルの1〜3階を占める。</string>
     <string name="title_activity_maps">MapsActivity</string>
     <string name="title_activity_maps_activity">Map</string>
+    <string name="title_activity_register">RegisterActivity</string>
+    <string name="title_activity_search_register">SearchRegisterActivity</string>
 
 </resources>

@@ -72,8 +72,6 @@ public class MapsActivity extends FragmentActivity  implements LocationListener 
         super.onResume();
         setUpMapIfNeeded();
         GPSCalibration();
-
-        //  locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0,0,this); //建物内だと取得しにくいのでネットワークにする。
     }
     @Override
     protected void onStop() {
@@ -361,7 +359,7 @@ public class MapsActivity extends FragmentActivity  implements LocationListener 
                 //描画
                 mMap.addPolyline(lineOptions);
             }else{
-                Toast.makeText(MapsActivity.this, "ルート情報を取得できませんでした", Toast.LENGTH_LONG).show();
+                Toast.makeText(MapsActivity.this, "ルート情報を取得できませんでした", Toast.LENGTH_SHORT).show();
             }
             progressDialog.hide();
         }
