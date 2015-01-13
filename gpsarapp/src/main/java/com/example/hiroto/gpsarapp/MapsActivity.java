@@ -44,7 +44,7 @@ public class MapsActivity extends FragmentActivity  implements LocationListener 
     public String travelMode = "driving";//default
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
     private LocationManager mLocationManager;//locationManager
-    private GeoPoint geoPoint;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,9 +64,7 @@ public class MapsActivity extends FragmentActivity  implements LocationListener 
             LatLng l = new LatLng(loc.getLatitude(),loc.getLongitude());
             routeSearch(l,NavigationManager.getTarget());
         }
-
     }
-
     @Override
     protected void onResume() {
         super.onResume();
@@ -229,26 +227,13 @@ public class MapsActivity extends FragmentActivity  implements LocationListener 
 
     //センサーオーバライドメソッド
     @Override
-    public void onStatusChanged(String provider, int status, Bundle extras)
-    {
-    }
-
+    public void onStatusChanged(String provider, int status, Bundle extras){}
     @Override
-    public void onProviderEnabled(String provider)
-    {
-    }
-
+    public void onProviderEnabled(String provider){}
     @Override
-    public void onProviderDisabled(String provider)
-    {
-    }
-
+    public void onProviderDisabled(String provider){}
     @Override
-    public void onLocationChanged(Location location)
-    {
-        geoPoint = new GeoPoint((int) (location.getLatitude() * 1E6), (int) (location.getLongitude() * 1E6));
-    }
-
+    public void onLocationChanged(Location location){}
     //----ルート検索用メソッド----
     private void routeSearch(LatLng origin,LatLng target){
         progressDialog.show();
@@ -332,7 +317,6 @@ public class MapsActivity extends FragmentActivity  implements LocationListener 
             }
             return routes;
         }
-
         //ルート検索で得た座標を使って経路表示
         @Override
         protected void onPostExecute(List<List<HashMap<String, String>>> result) {

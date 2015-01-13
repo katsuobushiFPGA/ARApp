@@ -63,7 +63,6 @@ public class ARView extends View {
         arActivity = (ARActivity)context;
         // データベースの読み込みを行う
         readTable(cursor);
-
         // 画面サイズの取得
         Display disp = ((WindowManager) context
                 .getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
@@ -108,8 +107,6 @@ public class ARView extends View {
         //ARナビの描画
         if(NavigationManager.getNavigationFlag()==true)
             drawRouteNavi(paint,canvas);
-        //AR矢印(テスト)の描画
-//        drawBalloonArrow(canvas,paint,displayX / 2 ,displayY * 2 / 3 ,8);
         // コンパスを描画する
         drawCompass(canvas, paint,POS_COMPASS_SIZE);
     }
@@ -123,11 +120,7 @@ public class ARView extends View {
             if(NavigationManager.getRoute().size() == 0) {
                 NavigationManager.setNavigationFlag(false);
             }
-//            Log.d("TEST", String.valueOf(NavigationManager.getRoute()));//最初の要素が入る。
-//            Log.d("TEST", String.valueOf(NavigationManager.getPosinfo()));//最初の要素が入る。
-
                 String tmp = NavigationManager.getRoute().get(0).get(0).values().toString();//lat
-//                Log.d("tmp",tmp);
                 Matcher m = p.matcher(tmp);
             while(m.find()){
                 latlng_.add(m.group());//1要素目にlng , 2要素目にlat
@@ -340,10 +333,6 @@ public class ARView extends View {
         canvas.rotate(-direction, POS_COMPASSX, POS_COMPASSY);
         canvas.drawPath(path, paint);
         canvas.rotate(direction, POS_COMPASSX, POS_COMPASSY);
-//        paint.setTextSize(12);
-//        paint.setColor(Color.WHITE);
-//        String str = new String();
-//        canvas.drawText(str, 5, POS_COMPASSY * 3, paint);
     }
 
     public void drawScreen(float preDirection, GeoPoint geoPoint) {
@@ -357,5 +346,4 @@ public class ARView extends View {
         // onDrawを呼び出して再描画
         invalidate();
     }
-
 }

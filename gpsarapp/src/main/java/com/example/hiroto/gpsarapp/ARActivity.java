@@ -14,14 +14,11 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Display;
-import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.WindowManager.LayoutParams;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.google.android.maps.GeoPoint;
@@ -53,7 +50,6 @@ public class ARActivity extends Activity implements SensorEventListener,
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
         // フルスクリーン指定
         getWindow().clearFlags(
                 WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
@@ -73,39 +69,15 @@ public class ARActivity extends Activity implements SensorEventListener,
                 .getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
         int displayX = disp.getWidth();
 
-        // 登録処理を行うlayoutの作成
-        LinearLayout layout = new LinearLayout(this);
-        layout.setOrientation(LinearLayout.HORIZONTAL);
-        layout.setGravity(Gravity.BOTTOM | Gravity.RIGHT);
-        // 登録文字
-        editText = new EditText(this);
-        editText.setWidth(displayX - BUTTON_SIZE);
-        // 登録ボタン
-        Button button = new Button(this);
-        button.setText("Register");
-        button.setOnClickListener(this);
-        button.setWidth(BUTTON_SIZE);
-        // 各要素の登録
-        layout.addView(editText, 0);
-        layout.addView(button, 1);
-
         // Viewの重ね合わせ
         setContentView(new CameraView(this));
         addContentView(arView, new LayoutParams(LayoutParams.FILL_PARENT,
                 LayoutParams.FILL_PARENT));
-        addContentView(layout, new LayoutParams(LayoutParams.FILL_PARENT,
-                LayoutParams.FILL_PARENT));
-
-
-
     }
-
     @Override
     public void onStart() {
         super.onStart();
-
     }
-
     @Override
     protected void onResume() {
         super.onResume();
@@ -120,8 +92,6 @@ public class ARActivity extends Activity implements SensorEventListener,
                 SensorManager.SENSOR_DELAY_NORMAL);
         Log.d("ONRESUME:", "TEST");
         Log.d("FLAG:", String.valueOf(NavigationManager.getNavigationFlag()));
-
-
     }
 
     @Override
@@ -141,7 +111,6 @@ public class ARActivity extends Activity implements SensorEventListener,
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
     }
-
     // センサー値の反映
     @Override
     public void onSensorChanged(SensorEvent event) {
@@ -181,17 +150,15 @@ public class ARActivity extends Activity implements SensorEventListener,
                 (float) arg0.getLongitude(), (float) arg0.getAltitude(),
                 new Date().getTime());
     }
-
     @Override
     public void onProviderDisabled(String provider) {
     }
-
     @Override
     public void onProviderEnabled(String provider) {
     }
-
-
-
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+    }
     @Override
     public void onClick(View v) {
         if (editText.getText().toString().equals("")) {
@@ -213,11 +180,4 @@ public class ARActivity extends Activity implements SensorEventListener,
             Toast.makeText(this, "テキストが登録されました", Toast.LENGTH_LONG).show();
         }
     }
-
-
-
-    @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) {
-    }
-
 }
