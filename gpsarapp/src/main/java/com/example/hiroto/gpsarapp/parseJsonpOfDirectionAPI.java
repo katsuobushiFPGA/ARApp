@@ -1,9 +1,6 @@
 package com.example.hiroto.gpsarapp;
 
-/**
- * GoogleDirectionsAPIを解析するクラス
- * @author hiroto
- */
+
 
 import com.google.android.gms.maps.model.LatLng;
 
@@ -14,7 +11,10 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
+/**
+ * GoogleDirectionsAPIを解析するクラス
+ * @author hiroto
+ */
 public class parseJsonpOfDirectionAPI {
     /**
      * JSONオブジェクトを解析する.
