@@ -8,7 +8,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-
+/**
+ * スポットの登録処理を行うクラス
+ */
 public class SearchRegisterActivity extends Activity implements View.OnClickListener{
     Button button_decide;
     Button button_clear;

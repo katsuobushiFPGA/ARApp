@@ -1,7 +1,8 @@
 package com.example.hiroto.gpsarapp;
 
 /**
- * Created by hiroto on 2014/12/29.
+ * GoogleDirectionsAPIを解析するクラス
+ * @author hiroto
  */
 
 import com.google.android.gms.maps.model.LatLng;
@@ -15,7 +16,11 @@ import java.util.HashMap;
 import java.util.List;
 
 public class parseJsonpOfDirectionAPI {
-
+    /**
+     * JSONオブジェクトを解析する.
+     * @param jObject jsonデータ
+     * @return ルートリスト
+     */
     public List<List<HashMap<String,String>>> parse(JSONObject jObject){
         String temp = "";
 
@@ -79,7 +84,6 @@ public class parseJsonpOfDirectionAPI {
                 }
                 //ルート情報
                 NavigationManager.setPosInfo(temp);
-//                Log.d("ROUTE",MapsActivity.posinfo);//ルート情報の表示（行き方)
             }
 
         } catch (JSONException e) {
@@ -91,7 +95,11 @@ public class parseJsonpOfDirectionAPI {
         return routes;
     }
 
-    //座標データをデコード
+    /**
+     * 座標データをデコード
+     * @param encoded
+     * @return 緯度と経度のリスト
+     */
     private List<LatLng> decodePoly(String encoded) {
 
         List<LatLng> poly = new ArrayList<LatLng>();

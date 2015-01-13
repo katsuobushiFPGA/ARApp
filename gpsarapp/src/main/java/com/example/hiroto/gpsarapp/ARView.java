@@ -1,8 +1,6 @@
 package com.example.hiroto.gpsarapp;
 
-/**
- * Created by hiroto on 2014/12/24.
- */
+
 
 import android.content.Context;
 import android.content.Intent;
@@ -26,7 +24,12 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-//public class ARView extends SurfaceView implements SurfaceHolder.Callback {
+/**
+ * ARViewクラス
+ * 緯度、経度をDBから呼び出しジオタグを画面上に出力する.
+ * @author hiroto
+ *
+ */
 public class ARView extends View {
     //
     private ARActivity arActivity;
@@ -70,6 +73,10 @@ public class ARView extends View {
         displayY =disp.getHeight();
     }
 
+    /**
+     * データベースに保存されている,全ての値をlistに入れる.
+     * @param cursor イテレータ
+     */
     public void readTable(Cursor cursor) {
         // データベースに保存されている
         // 全てのARテキストの情報をlistに読み込む
@@ -89,6 +96,9 @@ public class ARView extends View {
         } while (cursor.moveToNext());
     }
 
+    /**
+     * 緯度,経度,情報,画像パス,説明を持つ.
+     */
     class GPSData {
         public String info;
         public int latitude;
@@ -97,7 +107,12 @@ public class ARView extends View {
         public String description;
     }
 
-    // 描画処理
+    //
+
+    /**
+     * ARテキスト,ARナビの描画処理を行う.
+     * @param canvas キャンバス
+     */
     @Override
     protected void onDraw(Canvas canvas) {
         Paint paint = new Paint();
@@ -110,6 +125,12 @@ public class ARView extends View {
         // コンパスを描画する
         drawCompass(canvas, paint,POS_COMPASS_SIZE);
     }
+
+    /**
+     * 矢印の描画
+     * @param paint ペイント
+     * @param canvas キャンバス
+     */
     private void drawRouteNavi(Paint paint,Canvas canvas){
         HashMap<String,String> hm = new HashMap<String,String>();
         //判定するパターンを生成
@@ -157,6 +178,12 @@ public class ARView extends View {
                 drawBalloonArrow(canvas, paint, displayX / 2, displayY * 2 / 3, 8);//矢印の描画
                 invalidate();
     }
+
+    /**
+     * ARテキストを描画する.
+     * @param paint ペイント
+     * @param canvas キャンバス
+     */
     private void drawARText(Paint paint ,Canvas canvas) {
         for (int i = 0; i < list.size(); i++) {
             // データの読み込み
@@ -205,6 +232,15 @@ public class ARView extends View {
             }
         }
     }
+
+    /**
+     * 画面上に出力される、テキストのコア
+     * @param canvas
+     * @param paint
+     * @param text
+     * @param left
+     * @param top
+     */
     private void drawBalloonText(Canvas canvas, Paint paint, String text,
                                  float left, float top) {
         // 文字列の幅を取得
@@ -240,6 +276,15 @@ public class ARView extends View {
         paint.setColor(Color.WHITE);
         canvas.drawText(text, left, top, paint);
     }
+
+    /**
+     * 矢印を出力する
+     * @param canvas キャンバス
+     * @param paint ペイント
+     * @param x x座標
+     * @param y y座標
+     * @param size 大きさ
+     */
     private void drawBalloonArrow(Canvas canvas, Paint paint,float x,float y,float size){
         Path path = new Path();
         path.moveTo(x, y - 5 * (float) size);//頂点
@@ -257,7 +302,12 @@ public class ARView extends View {
         canvas.rotate( directionNavi, x, y);
     }
 
-    //タッチイベントの処理
+
+    /**
+     * 画面をタップした時に呼び出される処理
+     * @param event イベント
+     * @return true or false
+     */
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         if(event.getAction() == MotionEvent.ACTION_UP){
@@ -322,7 +372,12 @@ public class ARView extends View {
         return true;
     }
 
-    // コンパスの描画
+    /**
+     * コンパスを描画する処理
+     * @param canvas
+     * @param paint
+     * @param size
+     */
     private void drawCompass(Canvas canvas, Paint paint,double size) {
         Path path = new Path();
         path.moveTo(POS_COMPASSX, POS_COMPASSY - 20 * (float)size);
@@ -335,6 +390,11 @@ public class ARView extends View {
         canvas.rotate(direction, POS_COMPASSX, POS_COMPASSY);
     }
 
+    /**
+     * コンパスの向きを指定する処理.
+     * @param preDirection
+     * @param geoPoint
+     */
     public void drawScreen(float preDirection, GeoPoint geoPoint) {
         // センサーの値から端末の向きを計算する
         direction = (preDirection + 450) % 360;

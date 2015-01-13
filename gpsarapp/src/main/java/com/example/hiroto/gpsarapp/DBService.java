@@ -11,7 +11,8 @@ import android.os.Binder;
 import android.os.IBinder;
 
 /**
- * Created by hiroto on 2014/12/28.
+ * 観光地の値を保持する常駐するサービスクラス
+ * @author hiroto
  */
 public class DBService extends Service {
     // データベースで使用する変数
@@ -22,22 +23,39 @@ public class DBService extends Service {
     public static Cursor cursor;
     private final IBinder mBinder = new DBServiceBinder();    //Binderの生成
 
+    /**
+     * Serviceクラスが生成された時に処理する.
+     */
     @Override
     public void onCreate() {
         initData();
     }
+
+    /**
+     * startServiceでサービスが開始要求を受けたときのコールバック.
+     * @param intent
+     * @param flags
+     * @param startId
+     * @return
+     */
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         //明示的にサービスの起動、停止が決められる場合の返り値
         return START_STICKY;
     }
+
+    /**
+     * Service破棄時に呼び出される.
+     */
     @Override
     public void onDestroy() {
         super.onDestroy();
         cursor.close();
     }
 
-    //サービスに接続するためのBinder
+    /**
+     * サービスに接続するためのBinderクラス
+     */
     public class DBServiceBinder extends Binder {
         //サービスの取得
         DBService getService() {
@@ -45,11 +63,19 @@ public class DBService extends Service {
         }
     }
 
+    /**
+     * Bindするために必要なメソッド
+     * @param intent
+     * @return
+     */
     @Override
     public IBinder onBind(Intent intent) {
         return mBinder;
     }
 
+    /**
+     * データベースの初期設定を行う.
+     */
     public void initData() {
         // SQLiteOpenHelperを継承したクラスを使用してデータベースを作成します
         SQLiteOpenHelperEx helper = new SQLiteOpenHelperEx(this);
@@ -64,8 +90,10 @@ public class DBService extends Service {
                     "longitude","image" , "description" }, null, null, null, null, null);
         }
     }
+    /**
+     *  テーブルの内容が空の時以下の内容をセットする
+     */
     public void presetTable() {
-        // テーブルの内容が空の時以下の内容をセットする
         ContentValues values = new ContentValues();
         values.put("info", "安田講堂");
         values.put("latitude", 35713433);
@@ -134,13 +162,20 @@ public class DBService extends Service {
         values.put("description", "adachi_library");
         db.insert(DB_TABLE, "", values);
     }
-    //SQLクラス
+
+    /**
+     * DBを扱うためのSQLクラス
+     */
     public class SQLiteOpenHelperEx extends SQLiteOpenHelper {
         //      コンストラクタ
         public SQLiteOpenHelperEx(Context context) {
             super(context, DB_NAME, null, DB_VERSION);
         }
 
+        /**
+         * DB生成時に呼び出される.
+         * @param db
+         */
         @Override
         public void onCreate(SQLiteDatabase db) {
             // テーブルの作成
@@ -149,6 +184,12 @@ public class DBService extends Service {
             db.execSQL(sql);
         }
 
+        /**
+         * DBのバージョン変更時に呼び出される.
+         * @param db
+         * @param oldVersion
+         * @param newVersion
+         */
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
             // データベースのアップグレード

@@ -8,7 +8,8 @@ import android.widget.Button;
 import android.widget.Toast;
 
 /**
- * Created by hiroto on 2014/12/27.
+ * タイトル画面
+ * @author hiroto
  */
 public class TitleActivity extends Activity implements View.OnClickListener{
     Button button_gps;

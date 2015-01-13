@@ -40,6 +40,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+/**
+ * MapsActivity
+ * GoogleMapsによるルートナビゲーションを行うクラス.
+ * @author hirto
+ *
+ */
 public class MapsActivity extends FragmentActivity  implements LocationListener {
     //route
     public ProgressDialog progressDialog;
@@ -47,6 +53,10 @@ public class MapsActivity extends FragmentActivity  implements LocationListener 
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
     private LocationManager mLocationManager;//locationManager
 
+    /**
+     * Activityが生成時に呼び出されるクラス.
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,26 +77,45 @@ public class MapsActivity extends FragmentActivity  implements LocationListener 
             routeSearch(l, NavigationManager.getTarget());
         }
     }
+
+    /**
+     * ActivityがResume時に呼び出される.
+     */
     @Override
     protected void onResume() {
         super.onResume();
         setUpMapIfNeeded();
         GPSCalibration();
     }
+
+    /**
+     * ActivityがStop時に呼び出される.
+     */
     @Override
     protected void onStop() {
         super.onStop();
         mLocationManager.removeUpdates(this);
     }
+    /**
+     * ActivityがRestart時に呼び出される.
+     */
     @Override
     protected void onRestart() {
         super.onRestart();
     }
+    /**
+     * ActivityがDestroy時に呼び出される.
+     */
     @Override
     protected void onDestroy() {
         super.onDestroy();
         progressDialog.dismiss();
     }
+
+    /**
+     * GPSの緯度と経度を初期化する.
+     * GPSが取得できない場合に関してのエラー
+     */
     private void GPSCalibration() {
         mLocationManager = (LocationManager)this. getSystemService(Context.LOCATION_SERVICE);
         Criteria criteria = new Criteria();
@@ -102,6 +131,10 @@ public class MapsActivity extends FragmentActivity  implements LocationListener 
             GPSCalibration();
         }
     }
+
+    /**
+     * GoogleMapオブジェクトが取得されていない場合取得する処理を行う.
+     */
     private void setUpMapIfNeeded() {
         // Do a null check to confirm that we have not already instantiated the map.
         if (mMap == null) {
@@ -110,13 +143,25 @@ public class MapsActivity extends FragmentActivity  implements LocationListener 
                     .getMap();
         }
     }
-    //marker set
+
+    /**
+     * マーカーを配置する.
+     * @param lat 緯度
+     * @param lng 経度
+     * @param name 情報
+     */
     private void setUpMarker(int lat,int lng,String name) {
         GeoPoint geo = new GeoPoint(lat,lng);
         double latitude = geo.getLatitudeE6() / 1E6;
         double longitude = geo.getLongitudeE6() / 1E6;
         mMap.addMarker(new MarkerOptions().position(new LatLng(latitude,longitude)).title(name));
     }
+
+    /**
+     * 現在地を取得する.
+     * 最適な精度を選ぶ処理をさせる.
+     * @return 成功時Location 失敗時null
+     */
     private Location nowPoint() {
         Location location;
         if(mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER) != null) {
@@ -126,6 +171,9 @@ public class MapsActivity extends FragmentActivity  implements LocationListener 
         }
         return location;
     }
+    /**
+     * 地図のカメラの位置を現在位置に設定する.
+     */
     private void setUpCamera() {
         Location location = nowPoint();
         if(location == null) {
@@ -136,6 +184,13 @@ public class MapsActivity extends FragmentActivity  implements LocationListener 
             mMap.moveCamera(cu);
         }
     }
+
+    /**
+     * 現在地と引数から距離を計算する.
+     * @param latitude 緯度
+     * @param longitude 経度
+     * @param info スポット情報
+     */
     private void calcDistance(int latitude,int longitude, String info) {
         float[] results = new float[3];
         String distance = "";
@@ -165,7 +220,10 @@ public class MapsActivity extends FragmentActivity  implements LocationListener 
             Toast.makeText(this,"IllegalArgumentException" ,Toast.LENGTH_SHORT).show();
         }
     }
-    //DBからmarker情報を取得
+
+    /**
+     *  DBから情報を取得しイベント,マーカーを設定する.
+     */
     private void setDBMarker() {
         SQLiteDatabase sql = DBService.db;
         Cursor cur = sql.query(DBService.DB_TABLE, new String[]{"info", "latitude",
@@ -233,6 +291,10 @@ public class MapsActivity extends FragmentActivity  implements LocationListener 
         //カーソルクローズ
         cur.close();
     }
+
+    /**
+     * UIを設定する.
+     */
     private void setUISettings() {
         // 現在位置表示の有効化
         mMap.setMyLocationEnabled(true);
@@ -256,16 +318,45 @@ public class MapsActivity extends FragmentActivity  implements LocationListener 
         settings.setZoomGesturesEnabled(true);
     }
 
-    //センサーオーバライドメソッド
+
+    /**
+     * LocationProviderが無効になった場合に呼び出される
+     * @param provider
+     */
     @Override
-    public void onStatusChanged(String provider, int status, Bundle extras){}
+    public void onProviderDisabled(String provider) {}
+
+    /**
+     * LocationProviderが無効になった場合に呼び出される
+     * @param provider
+     */
     @Override
-    public void onProviderEnabled(String provider){}
+    public void onProviderEnabled(String provider) {}
+
+    /**
+     * LocationProviderの状態が変更された場合に呼び出される
+     * @param provider プロバイダ(GPS,Internet)
+     * @param status 状態を保存
+     * @param extras プロバイダ固有のステータス変数が含まれまる。(オプション)
+     */
     @Override
-    public void onProviderDisabled(String provider){}
+    public void onStatusChanged(String provider, int status, Bundle extras) {}
+
+    /**
+     * 自身の位置が変更された時に呼び出される.
+     * @param location
+     */
     @Override
     public void onLocationChanged(Location location){}
+
     //----ルート検索用メソッド----
+
+    /**
+     * 第一引数から第二引数までのルートを探索する.
+     * ルート情報等は全てNavigationManagerクラスが管理する.
+     * @param origin 起点
+     * @param target 終点
+     */
     private void routeSearch(LatLng origin,LatLng target){
         progressDialog.show();
         NavigationManager.setTarget(target);
@@ -273,6 +364,13 @@ public class MapsActivity extends FragmentActivity  implements LocationListener 
         DownloadTask downloadTask = new DownloadTask();
         downloadTask.execute(url);
     }
+
+    /**
+     * 第一引数から第二引数までのルートのURLを取得する.
+     * @param origin 起点
+     * @param target 終点
+     * @return 成功時 DirectionsAPIのURL
+     */
     private String getDirectionsUrl(LatLng origin,LatLng target){
         String str_origin = "origin="+origin.latitude+","+origin.longitude;
         String str_target = "destination="+target.latitude+","+target.longitude;
@@ -285,6 +383,12 @@ public class MapsActivity extends FragmentActivity  implements LocationListener 
         return url;
     }
 
+    /**
+     * URLから情報をダウンロードする.
+     * @param strUrl URL
+     * @return 成功時 DirectionsAPIのデータ
+     * @throws IOException
+     */
     private String downloadUrl(String strUrl) throws IOException {
         String data = "";
         InputStream iStream = null;
@@ -310,8 +414,17 @@ public class MapsActivity extends FragmentActivity  implements LocationListener 
         }
         return data;
     }
+
+    /**
+     * 非同期,バックグラウンドにルート情報を取得する
+     */
     private class DownloadTask extends AsyncTask<String, Void, String> {
-        //非同期で取得
+
+        /**
+         * バックグラウンドでdataをダウンロードする.
+         * @param url
+         * @return
+         */
         @Override
         protected String doInBackground(String... url) {
             String data = "";
@@ -323,7 +436,11 @@ public class MapsActivity extends FragmentActivity  implements LocationListener 
             }
             return data;
         }
-        // doInBackground()
+
+        /**
+         * parseJsonpOfDirectionsAPIにてJSONをparseする.
+         * @param result
+         */
         @Override
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
@@ -332,8 +449,15 @@ public class MapsActivity extends FragmentActivity  implements LocationListener 
         }
     }
 
-    /*parse the Google Places in JSON format */
+    /**
+     *  非同期に,JSONを解析する
+    */
     private class ParserTask extends AsyncTask<String, Integer, List<List<HashMap<String,String>>> >{
+        /**
+         * ルート情報を取得する
+         * @param jsonData ルートデータ
+         * @return 緯度経度のリスト
+         */
         @Override
         protected List<List<HashMap<String, String>>> doInBackground(String... jsonData) {
             JSONObject jObject;
@@ -347,7 +471,11 @@ public class MapsActivity extends FragmentActivity  implements LocationListener 
             }
             return routes;
         }
-        //ルート検索で得た座標を使って経路表示
+
+        /**
+         *  ルート検索で得た座標を使ってポリラインで経路表示
+         * @param result
+         */
         @Override
         protected void onPostExecute(List<List<HashMap<String, String>>> result) {
             ArrayList<LatLng> points = null;

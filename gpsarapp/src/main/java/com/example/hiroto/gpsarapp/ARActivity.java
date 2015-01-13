@@ -26,6 +26,13 @@ import com.google.android.maps.GeoPoint;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * ARActivityクラス
+ * ビューの重ねあわせ,Viewの操作を行う.
+ * 使用するAndroid固有のセンサ:磁気センサ,位置センサ
+ * @author hiroto
+ *
+ */
 public class ARActivity extends Activity implements SensorEventListener,
         LocationListener, View.OnClickListener {
 
@@ -46,6 +53,10 @@ public class ARActivity extends Activity implements SensorEventListener,
     private static final int BUTTON_SIZE = 80;
     EditText editText;
 
+    /**
+     * ARActivityが作成された時に初期化を行う。
+     * @param savedInstanceState
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,6 +89,10 @@ public class ARActivity extends Activity implements SensorEventListener,
     public void onStart() {
         super.onStart();
     }
+
+    /**
+     * ActivityがResume時に呼び出される。
+     */
     @Override
     protected void onResume() {
         super.onResume();
@@ -93,25 +108,43 @@ public class ARActivity extends Activity implements SensorEventListener,
         Log.d("ONRESUME:", "TEST");
         Log.d("FLAG:", String.valueOf(NavigationManager.getNavigationFlag()));
     }
-
+    /**
+     * ActivityがStop時に呼び出される。
+     */
     @Override
     public void onStop() {
         super.onStop();
         locationManager.removeUpdates(this);
         sensorManager.unregisterListener(this);
     }
+    /**
+     * ActivityがRestart時に呼び出される。
+     */
     @Override
     public void onRestart() {
         super.onRestart();
     }
+    /**
+     * ActivityがDestroy時に呼び出される。
+     */
     @Override
     public void onDestroy() {
         super.onDestroy();
     }
+
+    /**
+     * センサの精度が変更されたときに呼び出されます。
+     * @param sensor
+     * @param accuracy
+     */
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
     }
-    // センサー値の反映
+
+    /**
+     * センサ値が変更されたときに呼び出される.
+     * @param event イベント
+     */
     @Override
     public void onSensorChanged(SensorEvent event) {
         switch (event.sensor.getType()) {
@@ -142,6 +175,10 @@ public class ARActivity extends Activity implements SensorEventListener,
         }
     }
 
+    /**
+     * 自身の位置が変更された時に呼び出される.
+     * @param arg0
+     */
     @Override
     public void onLocationChanged(Location arg0) {
         geoPoint = new GeoPoint((int) (arg0.getLatitude() * 1E6), (int) (arg0
@@ -150,15 +187,34 @@ public class ARActivity extends Activity implements SensorEventListener,
                 (float) arg0.getLongitude(), (float) arg0.getAltitude(),
                 new Date().getTime());
     }
+
+    /**
+     * LocationProviderが無効になった場合に呼び出される
+     * @param provider
+     */
     @Override
-    public void onProviderDisabled(String provider) {
-    }
+    public void onProviderDisabled(String provider) {}
+
+    /**
+     * LocationProviderが無効になった場合に呼び出される
+     * @param provider
+     */
     @Override
-    public void onProviderEnabled(String provider) {
-    }
+    public void onProviderEnabled(String provider) {}
+
+    /**
+     * LocationProviderの状態が変更された場合に呼び出される
+     * @param provider プロバイダ(GPS,Internet)
+     * @param status 状態を保存
+     * @param extras プロバイダ固有のステータス変数が含まれまる。(オプション)
+     */
     @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) {
-    }
+    public void onStatusChanged(String provider, int status, Bundle extras) {}
+
+    /**
+     * Activityに存在するボタンが押された時に呼び出される.
+     * @param v ビュー
+     */
     @Override
     public void onClick(View v) {
         if (editText.getText().toString().equals("")) {

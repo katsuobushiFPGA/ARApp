@@ -6,7 +6,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-
+/**
+ * スポットの登録最終処理を行うクラス
+ */
 public class RegisterActivity extends Activity implements View.OnClickListener{
     Button button_edit;
     Button button_add;
@@ -20,7 +22,6 @@ public class RegisterActivity extends Activity implements View.OnClickListener{
         button_edit = (Button) findViewById(R.id.button_edit_register);
         button_add = (Button) findViewById(R.id.button_add_register);
         button_cancel = (Button) findViewById(R.id.button_cancel_register);
-
     }
     @Override
     public void onClick(View v) {
