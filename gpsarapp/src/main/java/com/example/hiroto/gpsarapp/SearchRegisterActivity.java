@@ -26,7 +26,6 @@ public class SearchRegisterActivity extends Activity implements View.OnClickList
         button_decide.setOnClickListener(this);
         button_clear.setOnClickListener(this);
         button_back.setOnClickListener(this);
-
     }
 
     @Override

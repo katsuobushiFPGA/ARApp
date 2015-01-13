@@ -13,44 +13,62 @@ public final class NavigationManager {
     //ナビゲーション用
     private static LatLng target;//目的地
     private static String posinfo;//ナビゲーション,ルート情報
-    private static List<List<HashMap<String,String>>> route;//ナビゲーション経路の緯度経度
-    private static String travelMode="driving";//ナビゲーションモード
+    private static List<List<HashMap<String, String>>> route;//ナビゲーション経路の緯度経度
+    private static String travelMode = "driving";//ナビゲーションモード
+    private static String info;
 
     //インスタンスをつくらせないようにする。
-    private NavigationManager(){};
-
-    public static void setNavigationReverse(){
+    private NavigationManager() {
+    }
+    public static void setNavigationReverse() {
         isNavigation = !isNavigation;
     }
-    public static void setNavigationFlag(boolean b){
+
+    public static void setNavigationFlag(boolean b) {
         isNavigation = b;
     }
-    public static boolean getNavigationFlag(){
+
+    public static boolean getNavigationFlag() {
         return isNavigation;
     }
-    public static void setPosInfo(String pos){
+
+    public static void setPosInfo(String pos) {
         posinfo = pos;
     }
-    public static String getPosinfo(){
+
+    public static String getPosinfo() {
         return posinfo;
     }
-    public static void setRoute(List<List<HashMap<String,String>>> r){
-       route = r;
+
+    public static void setRoute(List<List<HashMap<String, String>>> r) {
+        route = r;
     }
-    public static List<List<HashMap<String,String>>> getRoute(){
+
+    public static List<List<HashMap<String, String>>> getRoute() {
         return route;
     }
-    public static void setTravelMode(String tMode){
+
+    public static void setTravelMode(String tMode) {
         travelMode = tMode;
     }
-    public static String getTravelMode(){
+
+    public static String getTravelMode() {
         return travelMode;
     }
+
     public static void setTarget(LatLng t) {
         target = t;
     }
+
     public static LatLng getTarget() {
         return target;
+    }
+
+    public static void setInfo(String name) {
+        info = name;
+    }
+    public static String getInfo() {
+        return info;
     }
 
 }

@@ -1,7 +1,9 @@
 package com.example.hiroto.gpsarapp;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Criteria;
@@ -59,10 +61,10 @@ public class MapsActivity extends FragmentActivity  implements LocationListener 
         progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         progressDialog.setMessage("ルート検索中...");
         progressDialog.hide();
-        if(NavigationManager.getNavigationFlag()) {
+        if (NavigationManager.getNavigationFlag()) {
             Location loc = nowPoint();
-            LatLng l = new LatLng(loc.getLatitude(),loc.getLongitude());
-            routeSearch(l,NavigationManager.getTarget());
+            LatLng l = new LatLng(loc.getLatitude(), loc.getLongitude());
+            routeSearch(l, NavigationManager.getTarget());
         }
     }
     @Override
@@ -151,12 +153,7 @@ public class MapsActivity extends FragmentActivity  implements LocationListener 
             return;
         }
         try {
-            Location.distanceBetween(
-                    lat_now,
-                    lng_now,
-                    lat,
-                    lng,
-                    results);
+            Location.distanceBetween(lat_now,lng_now,lat,lng,results);
             if(results != null && results.length > 0) {
                 if(results[0] < 1000)
                     distance = String.valueOf((int)results[0] + "m") ;
@@ -183,18 +180,34 @@ public class MapsActivity extends FragmentActivity  implements LocationListener 
             mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
                 @Override
                 public boolean onMarkerClick(Marker marker) {
-                    Location lc = nowPoint();
-                    LatLng lg = new LatLng(lc.getLatitude(),lc.getLongitude());
-                    if(lg==null)setDBMarker();//nullならもう一回
-                    calcDistance((int) (marker.getPosition().latitude * 1E6), (int) (marker.getPosition().longitude * 1E6), marker.getTitle());
-                    if(NavigationManager.getNavigationFlag() == true) {
-                        mMap.clear();
-                        Log.d("ROUTE:POSINFO", NavigationManager.getPosinfo());
-                        Log.d("ROUTE:ROUTEPATH",String.valueOf(NavigationManager.getRoute()));
-                        NavigationManager.setNavigationFlag(false);
-                        setDBMarker();
-                    }
-                    routeSearch(lg, marker.getPosition());
+                    NavigationManager.setTarget(marker.getPosition());//target 設定
+                    NavigationManager.setInfo(marker.getTitle());//info 設定
+
+                    new AlertDialog.Builder(MapsActivity.this)
+                            .setTitle("What do you want?")
+                            .setPositiveButton(
+                                    "CalculationDistance",
+                                    new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            calcDistance((int) (NavigationManager.getTarget().latitude * 1E6), (int) (NavigationManager.getTarget().longitude * 1E6), NavigationManager.getInfo());
+                                        }
+                                    })
+                            .setNegativeButton(
+                                    "RouteSearch",
+                                    new DialogInterface.OnClickListener() {
+                                        Location lc = nowPoint();
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            if(NavigationManager.getNavigationFlag()) {
+                                                mMap.clear();
+                                                NavigationManager.setNavigationFlag(false);
+                                                setDBMarker();
+                                            }
+                                            routeSearch(new LatLng(lc.getLatitude(),lc.getLongitude()),new LatLng(NavigationManager.getTarget().latitude, NavigationManager.getTarget().longitude));
+                                        }
+                                    })
+                            .show();
                     return false;
                 }
             });
@@ -279,7 +292,6 @@ public class MapsActivity extends FragmentActivity  implements LocationListener 
         }
         return data;
     }
-
     private class DownloadTask extends AsyncTask<String, Void, String> {
         //非同期で取得
         @Override
