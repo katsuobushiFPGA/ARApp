@@ -182,31 +182,49 @@ public class MapsActivity extends FragmentActivity  implements LocationListener 
                 public boolean onMarkerClick(Marker marker) {
                     NavigationManager.setTarget(marker.getPosition());//target 設定
                     NavigationManager.setInfo(marker.getTitle());//info 設定
-
+                    final String[] DoList = new String[]{"CalcDistance","RouteSearch"};
+                    final String[] NaviList = new String[]{"driving","walking","bicycling"};
                     new AlertDialog.Builder(MapsActivity.this)
                             .setTitle("What do you want?")
-                            .setPositiveButton(
-                                    "CalculationDistance",
-                                    new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            calcDistance((int) (NavigationManager.getTarget().latitude * 1E6), (int) (NavigationManager.getTarget().longitude * 1E6), NavigationManager.getInfo());
-                                        }
-                                    })
-                            .setNegativeButton(
-                                    "RouteSearch",
-                                    new DialogInterface.OnClickListener() {
-                                        Location lc = nowPoint();
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            if(NavigationManager.getNavigationFlag()) {
-                                                mMap.clear();
-                                                NavigationManager.setNavigationFlag(false);
-                                                setDBMarker();
-                                            }
-                                            routeSearch(new LatLng(lc.getLatitude(),lc.getLongitude()),new LatLng(NavigationManager.getTarget().latitude, NavigationManager.getTarget().longitude));
-                                        }
-                                    })
+                            .setItems(DoList,new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog,int which) {
+                                    switch(which) {
+                                        case 0: calcDistance((int) (NavigationManager.getTarget().latitude * 1E6), (int) (NavigationManager.getTarget().longitude * 1E6), NavigationManager.getInfo());
+                                                 break;
+                                        case 1:   new AlertDialog.Builder(MapsActivity.this)
+                                                   .setTitle("What is vehicle?")
+                                                   .setItems(NaviList,new DialogInterface.OnClickListener() {
+                                                     @Override
+                                                     public void onClick(DialogInterface dialog,int vehicle) {
+                                                        switch(vehicle) {
+                                                            case 0:NavigationManager.setTravelMode(NaviList[0]);
+                                                                break;
+                                                            case 1:NavigationManager.setTravelMode(NaviList[1]);
+                                                                break;
+                                                            case 2:NavigationManager.setTravelMode(NaviList[2]);
+                                                                break;
+                                                            default:
+                                                                break;
+                                                        }
+                                                     }
+                                                    })
+                                                    .create()
+                                                    .show();
+
+                                                    Location lc = nowPoint();
+                                                    if(NavigationManager.getNavigationFlag()) {
+                                                            mMap.clear();
+                                                            NavigationManager.setNavigationFlag(false);
+                                                            setDBMarker();
+                                                     }
+                                                     routeSearch(new LatLng(lc.getLatitude(),lc.getLongitude()),new LatLng(NavigationManager.getTarget().latitude, NavigationManager.getTarget().longitude));
+                                                        break;
+                                        default:break;
+                                    }
+                                }
+                            })
+                            .create()
                             .show();
                     return false;
                 }

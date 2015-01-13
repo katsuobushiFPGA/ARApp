@@ -147,18 +147,12 @@ public class SpotActivity extends Activity implements View.OnClickListener , Loc
             return;
         }
         try {
-            Location.distanceBetween(
-                    lat_now,
-                    lng_now,
-                    lat,
-                    lng,
-                    results);
+            Location.distanceBetween(lat_now,lng_now,lat,lng,results);
             if(results != null && results.length > 0) {
                 if(results[0] < 1000)
                     distance = String.valueOf((int)results[0] + "m") ;
                 else
                     distance = new BigDecimal(results[0]).divide(new BigDecimal(1E3),3,BigDecimal.ROUND_HALF_UP).toString() + "km";
-
                 Toast.makeText(this,"現在地から" + info + "までの距離" + distance ,Toast.LENGTH_SHORT).show();
             }
         } catch (IllegalArgumentException ex) {
@@ -251,22 +245,11 @@ public class SpotActivity extends Activity implements View.OnClickListener , Loc
     //Location Listener
     //センサーオーバライドメソッド
     @Override
-    public void onStatusChanged(String provider, int status, Bundle extras)
-    {
-    }
-
+    public void onStatusChanged(String provider, int status, Bundle extras){}
     @Override
-    public void onProviderEnabled(String provider)
-    {
-    }
-
+    public void onProviderEnabled(String provider){}
     @Override
-    public void onProviderDisabled(String provider)
-    {
-    }
-
+    public void onProviderDisabled(String provider){}
     @Override
-    public void onLocationChanged(Location location)
-    {
-    }
+    public void onLocationChanged(Location location){}
 }
