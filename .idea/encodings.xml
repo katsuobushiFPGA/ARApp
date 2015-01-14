@@ -12,7 +12,9 @@
     <file url="file://$PROJECT_DIR$/gpsarapp/src/main/java/com/example/hiroto/gpsarapp/SearchRegisterActivity.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/gpsarapp/src/main/java/com/example/hiroto/gpsarapp/SpotActivity.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/gpsarapp/src/main/java/com/example/hiroto/gpsarapp/TitleActivity.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/gpsarapp/src/main/java/com/example/hiroto/gpsarapp/parseJsonOfPlacesAPI.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/gpsarapp/src/main/java/com/example/hiroto/gpsarapp/parseJsonpOfDirectionAPI.java" charset="UTF-8" />
+    <file url="PROJECT" charset="UTF-8" />
   </component>
 </project>
 

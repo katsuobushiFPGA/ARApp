@@ -63,13 +63,9 @@ public class PlacesActivity extends Activity {
         String sensor = "sensor=false";
         String apiKey = "AIzaSyD6dulvTapDNQwpyPlbonwvg674BDV1xAw";
         //パラメータ
-        String parameters = "https://maps.googleapis.com/maps/api/place/search/json?location=" + origin.latitude + "," +
+        String url = "https://maps.googleapis.com/maps/api/place/search/json?location=" + origin.latitude + "," +
                                         origin.longitude + "&radius=" + rad + "&types="+ type + "&language=ja" + "&" + sensor + "&key=" + apiKey;
-        //JSON指定
-//        String output = "json";
-//        String url = "https://maps.googleapis.com/maps/api/directions/"+output+"?"+parameters;
-//        Log.d("URL",url);
-        return parameters;
+        return url;
     }
 
     /**

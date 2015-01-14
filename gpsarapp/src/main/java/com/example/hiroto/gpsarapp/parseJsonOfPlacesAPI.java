@@ -1,5 +1,7 @@
 package com.example.hiroto.gpsarapp;
 
+import android.util.Log;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -7,30 +9,33 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * GooglePlacesAPI‚©‚çó‚¯æ‚Á‚½JSONƒIƒuƒWƒFƒNƒg‚ğ‰ğÍ‚·‚é.
+ * GooglePlacesAPI
  * @author hiroto
  *
  */
 public class parseJsonOfPlacesAPI {
     /**
-     * GooglePlacesAPI‚©‚çó‚¯æ‚Á‚½JSONƒIƒuƒWƒFƒNƒg‚ğ‰ğÍ‚·‚é.
-     * @param jsonObject jsonƒf[ƒ^
-     * @return ƒ‹[ƒgƒŠƒXƒg
+     * GooglePlacesAPIï¿½ï¿½ï¿½ï¿½ó‚¯ï¿½ï¿½ï¿½ï¿½JSONï¿½Iï¿½uï¿½Wï¿½Fï¿½Nï¿½gï¿½ï¿½ï¿½ï¿½Í‚ï¿½ï¿½ï¿½.
+     * @param jsonObject jsonï¿½fï¿½[ï¿½^
+     * @return ï¿½ï¿½ï¿½[ï¿½gï¿½ï¿½ï¿½Xï¿½g
      */
     public List<String[]> parse(JSONObject jsonObject) {
         List<String[]> list = new ArrayList<>();
         JSONArray jsonResults = null;
-        // —\•ñî•ñ‚Ìˆê——‚ğæ“¾
+        // ï¿½\ï¿½ï¿½ï¿½ï¿½Ìˆê——ï¿½ï¿½ï¿½æ“¾
         try {
             jsonResults = jsonObject.getJSONArray("results");// { "geometry","icon"."id","name","rating","reference","types","vicinity"}
             for(int i=0;i < jsonResults.length();i++) {
-                JSONObject geometry = jsonResults.getJSONObject(0);
+                JSONObject jsonElem = jsonResults.getJSONObject(i);
+                JSONObject geometry = jsonElem.getJSONObject("geometry");
                 JSONObject location = geometry.getJSONObject("location");
                 String lat = location.getString("lat");
                 String lng = location.getString("lng");
-                JSONObject name = jsonResults.getJSONObject(3);
-                String name_ = name.getString("name");
-                list.add(new String[]{name_,lat,lng});
+                String name = jsonElem.getString("name");
+                Log.d("lat",lat);
+                Log.d("lng",lng);
+                Log.d("name",name);
+                list.add(new String[]{name,lat,lng});
             }
         }catch(Exception e) {
             e.printStackTrace();
