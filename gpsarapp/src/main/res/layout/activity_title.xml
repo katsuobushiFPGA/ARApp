@@ -38,4 +38,11 @@
         android:id="@+id/button_place"
         android:layout_gravity="right|top" />
 
+    <Button
+        android:layout_width="320dp"
+        android:layout_height="180dp"
+        android:text="GooglePlaces"
+        android:id="@+id/button_places"
+        android:layout_gravity="left|top" />
+
 </FrameLayout>

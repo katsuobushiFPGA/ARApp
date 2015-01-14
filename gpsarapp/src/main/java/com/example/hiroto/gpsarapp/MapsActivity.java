@@ -48,7 +48,7 @@ import java.util.List;
  */
 public class MapsActivity extends FragmentActivity  implements LocationListener {
     //route
-    public ProgressDialog progressDialog;
+    private ProgressDialog progressDialog;
     public String travelMode = "driving";//default
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
     private LocationManager mLocationManager;//locationManager

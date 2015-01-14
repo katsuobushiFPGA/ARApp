@@ -17,7 +17,7 @@ public class TitleActivity extends Activity implements View.OnClickListener{
     Button button_map;
     Button button_object;
     Button button_place;
-
+    Button button_places;
     @Override
     public void onCreate(Bundle savedInstance) {
         super.onCreate(savedInstance);
@@ -27,12 +27,14 @@ public class TitleActivity extends Activity implements View.OnClickListener{
         button_map  = (Button)findViewById(R.id.button_map);
         button_object  = (Button)findViewById(R.id.button_object);
         button_place = (Button)findViewById(R.id.button_place);
+        button_places = (Button)findViewById(R.id.button_places);
 
         button_gps.setOnClickListener(this);
         button_game.setOnClickListener(this);
         button_map.setOnClickListener(this);
         button_object.setOnClickListener(this);
         button_place.setOnClickListener(this);
+        button_places.setOnClickListener(this);
 
         startService(new Intent(TitleActivity.this, DBService.class));
     }
@@ -68,6 +70,9 @@ public class TitleActivity extends Activity implements View.OnClickListener{
             return;
         }else if(v == button_place) {
             Intent intent = new Intent(TitleActivity.this, SearchRegisterActivity.class);
+            startActivity(intent);
+        }else if(v == button_places) {
+            Intent intent = new Intent(TitleActivity.this, PlacesActivity.class);
             startActivity(intent);
         }else {
             Toast.makeText(this, "No detected Button", Toast.LENGTH_SHORT).show();

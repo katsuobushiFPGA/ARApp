@@ -57,5 +57,6 @@
     <string name="title_activity_maps_activity">Map</string>
     <string name="title_activity_register">RegisterActivity</string>
     <string name="title_activity_search_register">SearchRegisterActivity</string>
+    <string name="title_activity_places">PlacesActivity</string>
 
 </resources>
