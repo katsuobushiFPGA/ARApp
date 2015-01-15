@@ -45,4 +45,11 @@
         android:id="@+id/button_places"
         android:layout_gravity="left|top" />
 
+    <Button
+        android:layout_width="320dp"
+        android:layout_height="180dp"
+        android:text="StreetView"
+        android:id="@+id/button_street_view"
+        android:layout_gravity="left|bottom" />
+
 </FrameLayout>
