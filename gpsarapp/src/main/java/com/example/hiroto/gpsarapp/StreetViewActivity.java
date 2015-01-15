@@ -25,7 +25,7 @@ public class StreetViewActivity extends Activity implements LocationListener {
     private LocationManager mLocationManager;
     private GeoPoint geoPoint;
 
-    private static  LatLng PIN;
+    private static  LatLng PIN;//位置
 
 
     @Override

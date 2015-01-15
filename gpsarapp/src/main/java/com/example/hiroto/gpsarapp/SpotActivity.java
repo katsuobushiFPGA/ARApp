@@ -1,7 +1,9 @@
 package com.example.hiroto.gpsarapp;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Criteria;
 import android.location.Location;
@@ -109,6 +111,26 @@ public class SpotActivity extends Activity implements View.OnClickListener , Loc
     @Override
     public void onClick(View v) {
         if (v == navi) {
+            final String[] NaviList = new String[]{"driving","walking","bicycling"};
+            new AlertDialog.Builder(SpotActivity.this)
+                    .setTitle("What is vehicle?")
+                    .setItems(NaviList,new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog,int vehicle) {
+                            switch(vehicle) {
+                                case 0:NavigationManager.setTravelMode(NaviList[0]);
+                                    break;
+                                case 1:NavigationManager.setTravelMode(NaviList[1]);
+                                    break;
+                                case 2:NavigationManager.setTravelMode(NaviList[2]);
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+                    })
+                    .create()
+                    .show();
             Toast.makeText(this, "ナビを開始します.\n下の矢印に沿って歩いてください.", Toast.LENGTH_SHORT).show();
             GeoPoint geo = new GeoPoint(lat, lng);
             double lat_target = geo.getLatitudeE6() / 1E6;

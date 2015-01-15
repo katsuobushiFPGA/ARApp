@@ -140,12 +140,14 @@ public class ARView extends View {
             //sizeが0ならflagをfalseに
             if(NavigationManager.getRoute().size() == 0) {
                 NavigationManager.setNavigationFlag(false);
+                return;
             }
                 String tmp = NavigationManager.getRoute().get(0).get(0).values().toString();//lat
                 Matcher m = p.matcher(tmp);
-            while(m.find()){
-                latlng_.add(m.group());//1要素目にlng , 2要素目にlat
-            }
+                while (m.find()) {
+                    latlng_.add(m.group());//1要素目にlng , 2要素目にlat
+                }
+
                 double a =  Double.valueOf(latlng_.get(0))*1E6;
                 double b =  Double.valueOf(latlng_.get(1))*1E6;
                 int y = (int)b;//latitude
