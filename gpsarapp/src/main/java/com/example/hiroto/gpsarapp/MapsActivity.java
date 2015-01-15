@@ -265,19 +265,19 @@ public class MapsActivity extends FragmentActivity  implements LocationListener 
                                                             default:
                                                                 break;
                                                         }
+                                                         Location lc = nowPoint();
+                                                         if(NavigationManager.getNavigationFlag()) {
+                                                             mMap.clear();
+                                                             NavigationManager.setNavigationFlag(false);
+                                                             setDBMarker();
+                                                         }
+                                                         Log.d("LatLng",String.valueOf(new LatLng(lc.getLatitude(),lc.getLongitude())));
+                                                         routeSearch(new LatLng(lc.getLatitude(),lc.getLongitude()),new LatLng(NavigationManager.getTarget().latitude, NavigationManager.getTarget().longitude));
                                                      }
                                                     })
                                                     .create()
                                                     .show();
-
-                                                    Location lc = nowPoint();
-                                                    if(NavigationManager.getNavigationFlag()) {
-                                                            mMap.clear();
-                                                            NavigationManager.setNavigationFlag(false);
-                                                            setDBMarker();
-                                                     }
-                                                     routeSearch(new LatLng(lc.getLatitude(),lc.getLongitude()),new LatLng(NavigationManager.getTarget().latitude, NavigationManager.getTarget().longitude));
-                                                        break;
+                                                    break;
                                         default:break;
                                     }
                                 }

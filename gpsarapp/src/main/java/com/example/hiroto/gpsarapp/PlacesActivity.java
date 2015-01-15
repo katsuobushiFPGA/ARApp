@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.TextView;
 
 import com.google.android.gms.maps.model.LatLng;
 
@@ -18,17 +19,21 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
 
-
+/**
+ * Places APIをテストするActivity
+ */
 public class PlacesActivity extends Activity {
     private ProgressDialog progressDialog;
+    TextView text;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_places);
         progressDialog = new ProgressDialog(this);
         progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        progressDialog.setMessage("ルート検索中...");
+        progressDialog.setMessage("施設検索中...");
         progressDialog.hide();
+        text = (TextView)findViewById(R.id.text_places);
 
         placesSearch(new LatLng(35.6814,139.7674));
     }
@@ -166,6 +171,7 @@ public class PlacesActivity extends Activity {
          */
         @Override
         protected void onPostExecute(List<String[]> result) {
+            text.setText(String.valueOf(result));
             progressDialog.hide();
         }
     }

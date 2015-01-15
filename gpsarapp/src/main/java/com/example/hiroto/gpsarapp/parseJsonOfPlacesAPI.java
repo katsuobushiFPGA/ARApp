@@ -15,14 +15,13 @@ import java.util.List;
  */
 public class parseJsonOfPlacesAPI {
     /**
-     * GooglePlacesAPI����󂯎����JSON�I�u�W�F�N�g����͂���.
-     * @param jsonObject json�f�[�^
-     * @return ���[�g���X�g
+     * JSONデータを解析する
+     * @param jsonObject jsonObject
+     * @return 施設データ(緯度,経度,名前)
      */
     public List<String[]> parse(JSONObject jsonObject) {
         List<String[]> list = new ArrayList<>();
         JSONArray jsonResults = null;
-        // �\����̈ꗗ���擾
         try {
             jsonResults = jsonObject.getJSONArray("results");// { "geometry","icon"."id","name","rating","reference","types","vicinity"}
             for(int i=0;i < jsonResults.length();i++) {

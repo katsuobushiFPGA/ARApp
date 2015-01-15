@@ -47,7 +47,6 @@ public class SpotActivity extends Activity implements View.OnClickListener , Loc
 
     /**
      * Activityが生成時に呼び出される
-     *
      * @param savedInstance
      */
     @Override
