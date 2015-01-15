@@ -17,6 +17,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.maps.GeoPoint;
 
 /**
+ * ストリートビューを用い,ナビゲーションを行うクラス
  * @author hiroto
  */
 public class StreetViewActivity extends Activity implements LocationListener {
@@ -28,6 +29,10 @@ public class StreetViewActivity extends Activity implements LocationListener {
     private static  LatLng PIN;//位置
 
 
+    /**
+     * Activity生成時に行われる処理
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

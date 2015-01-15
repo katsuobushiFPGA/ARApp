@@ -127,22 +127,22 @@ public class SpotActivity extends Activity implements View.OnClickListener , Loc
                                 default:
                                     break;
                             }
+                            GeoPoint geo = new GeoPoint(lat, lng);
+                            double lat_target = geo.getLatitudeE6() / 1E6;
+                            double lng_target = geo.getLongitudeE6() / 1E6;
+
+                            //現在地の緯度、経度の精度がデータベースと合わないので変換
+                            double lat_now = ((int) (nowPoint().getLatitude() * 1E6) / 1E6);
+                            double lng_now = ((int) (nowPoint().getLongitude() * 1E6) / 1E6);
+
+                            //ここでナビゲーションの設定をする。3Dナビの実装が必要。および2Dマップでも必要。
+                            routeSearch(new LatLng(lat_now, lng_now), new LatLng(lat_target, lng_target));
+                            Toast.makeText(SpotActivity.this, "ナビを開始します.\n下の矢印に沿って歩いてください.", Toast.LENGTH_SHORT).show();
+                            finish();
                         }
                     })
                     .create()
                     .show();
-            Toast.makeText(this, "ナビを開始します.\n下の矢印に沿って歩いてください.", Toast.LENGTH_SHORT).show();
-            GeoPoint geo = new GeoPoint(lat, lng);
-            double lat_target = geo.getLatitudeE6() / 1E6;
-            double lng_target = geo.getLongitudeE6() / 1E6;
-
-            //現在地の緯度、経度の精度がデータベースと合わないので変換
-            double lat_now = ((int) (nowPoint().getLatitude() * 1E6) / 1E6);
-            double lng_now = ((int) (nowPoint().getLongitude() * 1E6) / 1E6);
-
-            //ここでナビゲーションの設定をする。3Dナビの実装が必要。および2Dマップでも必要。
-            routeSearch(new LatLng(lat_now, lng_now), new LatLng(lat_target, lng_target));
-            finish();
         } else if (v == distance) {
             calcDistance(lat, lng, info);//現在地からの距離を計算
         } else {
