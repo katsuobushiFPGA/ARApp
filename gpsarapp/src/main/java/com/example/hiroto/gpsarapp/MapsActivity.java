@@ -241,7 +241,7 @@ public class MapsActivity extends FragmentActivity  implements LocationListener 
                     NavigationManager.setTarget(marker.getPosition());//target 設定
                     NavigationManager.setInfo(marker.getTitle());//info 設定
                     final String[] DoList = new String[]{"CalcDistance","RouteSearch"};
-                    final String[] NaviList = new String[]{"driving","walking","bicycling"};
+                    final String[] NaviList = new String[]{"DRIVING","WALKING","BICYCLING"};
                     new AlertDialog.Builder(MapsActivity.this)
                             .setTitle("What do you want?")
                             .setItems(DoList,new DialogInterface.OnClickListener() {

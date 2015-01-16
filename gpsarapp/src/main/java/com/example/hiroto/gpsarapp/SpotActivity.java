@@ -111,7 +111,7 @@ public class SpotActivity extends Activity implements View.OnClickListener , Loc
     @Override
     public void onClick(View v) {
         if (v == navi) {
-            final String[] NaviList = new String[]{"driving","walking","bicycling"};
+            final String[] NaviList = new String[]{"DRIVING","WALKING","BICYCLING"};
             new AlertDialog.Builder(SpotActivity.this)
                     .setTitle("What is vehicle?")
                     .setItems(NaviList,new DialogInterface.OnClickListener() {

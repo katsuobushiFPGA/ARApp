@@ -1,7 +1,6 @@
 package com.example.hiroto.gpsarapp;
 
 import android.app.Activity;
-import android.content.ContentValues;
 import android.content.Context;
 import android.hardware.GeomagneticField;
 import android.hardware.Sensor;
@@ -14,12 +13,9 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Display;
-import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.WindowManager.LayoutParams;
-import android.widget.EditText;
-import android.widget.Toast;
 
 import com.google.android.maps.GeoPoint;
 
@@ -34,7 +30,7 @@ import java.util.List;
  *
  */
 public class ARActivity extends Activity implements SensorEventListener,
-        LocationListener, View.OnClickListener {
+        LocationListener {
 
     private SensorManager sensorManager;
     private float[] accelerometerValues = new float[3];
@@ -48,13 +44,9 @@ public class ARActivity extends Activity implements SensorEventListener,
     private GeoPoint geoPoint;
     private GeomagneticField geomagneticField;
 
-
-
-    private static final int BUTTON_SIZE = 80;
-    EditText editText;
-
     /**
      * ARActivityが作成された時に初期化を行う。
+     *
      * @param savedInstanceState
      */
     @Override
@@ -68,7 +60,7 @@ public class ARActivity extends Activity implements SensorEventListener,
         requestWindowFeature(Window.FEATURE_NO_TITLE);
 
         // ARViewの取得
-            arView = new ARView(this, DBService.cursor);
+        arView = new ARView(this, DBService.cursor);
         //  DBService.cursor.close();
         // 各種センサーの用意
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
@@ -85,6 +77,7 @@ public class ARActivity extends Activity implements SensorEventListener,
         addContentView(arView, new LayoutParams(LayoutParams.FILL_PARENT,
                 LayoutParams.FILL_PARENT));
     }
+
     @Override
     public void onStart() {
         super.onStart();
@@ -108,6 +101,7 @@ public class ARActivity extends Activity implements SensorEventListener,
         Log.d("ONRESUME:", "TEST");
         Log.d("FLAG:", String.valueOf(NavigationManager.getNavigationFlag()));
     }
+
     /**
      * ActivityがStop時に呼び出される。
      */
@@ -117,6 +111,7 @@ public class ARActivity extends Activity implements SensorEventListener,
         locationManager.removeUpdates(this);
         sensorManager.unregisterListener(this);
     }
+
     /**
      * ActivityがRestart時に呼び出される。
      */
@@ -124,6 +119,7 @@ public class ARActivity extends Activity implements SensorEventListener,
     public void onRestart() {
         super.onRestart();
     }
+
     /**
      * ActivityがDestroy時に呼び出される。
      */
@@ -133,7 +129,8 @@ public class ARActivity extends Activity implements SensorEventListener,
     }
 
     /**
-     * センサの精度が変更されたときに呼び出されます。
+     * センサの精度が変更されたときに呼び出される。
+     *
      * @param sensor
      * @param accuracy
      */
@@ -143,6 +140,7 @@ public class ARActivity extends Activity implements SensorEventListener,
 
     /**
      * センサ値が変更されたときに呼び出される.
+     *
      * @param event イベント
      */
     @Override
@@ -177,6 +175,7 @@ public class ARActivity extends Activity implements SensorEventListener,
 
     /**
      * 自身の位置が変更された時に呼び出される.
+     *
      * @param arg0
      */
     @Override
@@ -190,50 +189,30 @@ public class ARActivity extends Activity implements SensorEventListener,
 
     /**
      * LocationProviderが無効になった場合に呼び出される
+     *
      * @param provider
      */
     @Override
-    public void onProviderDisabled(String provider) {}
+    public void onProviderDisabled(String provider) {
+    }
 
     /**
      * LocationProviderが無効になった場合に呼び出される
+     *
      * @param provider
      */
     @Override
-    public void onProviderEnabled(String provider) {}
+    public void onProviderEnabled(String provider) {
+    }
 
     /**
      * LocationProviderの状態が変更された場合に呼び出される
+     *
      * @param provider プロバイダ(GPS,Internet)
-     * @param status 状態を保存
-     * @param extras プロバイダ固有のステータス変数が含まれまる。(オプション)
+     * @param status   状態を保存
+     * @param extras   プロバイダ固有のステータス変数が含まれまる。(オプション)
      */
     @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) {}
-
-    /**
-     * Activityに存在するボタンが押された時に呼び出される.
-     * @param v ビュー
-     */
-    @Override
-    public void onClick(View v) {
-        if (editText.getText().toString().equals("")) {
-            Toast.makeText(this, "テキストを入力してください", Toast.LENGTH_LONG).show();
-        } else if (geoPoint == null) {
-            Toast.makeText(this, "位置情報が取得できません", Toast.LENGTH_LONG).show();
-        } else {
-            ContentValues values = new ContentValues();
-            values.put("info", editText.getText().toString());
-            values.put("latitude", geoPoint.getLatitudeE6());
-            values.put("longitude", geoPoint.getLongitudeE6());
-            values.put("image","dummy");//image dummy
-            values.put("description","dummy");//description dummy
-            DBService.db.insert(DBService.DB_TABLE, "", values);
-            DBService.cursor = DBService.db.query(DBService.DB_TABLE, new String[] { "info", "latitude",
-                    "longitude","image","description" }, null, null, null, null, null);
-            arView.readTable(DBService.cursor);
-            editText.setText("");
-            Toast.makeText(this, "テキストが登録されました", Toast.LENGTH_LONG).show();
-        }
+    public void onStatusChanged(String provider, int status, Bundle extras) {
     }
 }
