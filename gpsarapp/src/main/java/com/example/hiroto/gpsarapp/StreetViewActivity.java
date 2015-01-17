@@ -49,6 +49,7 @@ public class StreetViewActivity extends ActionBarActivity implements LocationLis
     private float mLaptime = 0.0f;
     //タイマ用イテレータ
     private Iterator mTimeIter;
+    private int counter;
 
     /**
      * Activity生成時に行われる処理
@@ -139,7 +140,7 @@ public class StreetViewActivity extends ActionBarActivity implements LocationLis
                 mTask = new RouteNaviTask();
                 mLaptime = 0.0f;
                 mTimer = new Timer(true);
-                mTimer.schedule(mTask, 100, 100);
+                mTimer.schedule(mTask, 5000, 5000);
                 //ルート処理
                 return true;
 
@@ -217,7 +218,7 @@ public class StreetViewActivity extends ActionBarActivity implements LocationLis
                 .getLongitude() * 1E6));
         Log.d("LocationChanged",String.valueOf(geoPoint));
         PIN = new LatLng((double)(geoPoint.getLatitudeE6() / 1E6),(double)(geoPoint.getLongitudeE6() / 1E6));
-        map.setPosition(PIN);
+//        map.setPosition(PIN);
     }
 
     /**
@@ -231,15 +232,16 @@ public class StreetViewActivity extends ActionBarActivity implements LocationLis
             mHandler.post( new Runnable() {
                 public void run() {
                     List<List<HashMap<String, String>>> route = NavigationManager.getRoute();
-                    if(mTimeIter == null){
-                        mTimeIter = route.iterator();
-                    }
-                    if(!mTimeIter.hasNext()) {
+                    Log.d("size",String.valueOf(route.get(0).size()));
+                    HashMap<String,String> hm = route.get(0).get(counter);
+                    map.setPosition( new LatLng(Double.valueOf(hm.get("lat")),Double.valueOf(hm.get("lng"))) );
+                    counter++;
+                    if(counter >= route.get(0).size()) {
                         //タイマーの停止処理
                         mTimer.cancel();
                         mTimer = null;
+                        Toast.makeText(StreetViewActivity.this, "ナビゲーション終了", Toast.LENGTH_SHORT).show();
                     }
-
                 }
             });
         }
