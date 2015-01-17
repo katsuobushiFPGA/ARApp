@@ -75,7 +75,8 @@
         </activity>
         <activity
             android:name=".StreetViewActivity"
-            android:label="@string/title_activity_street_view" >
+            android:label="@string/title_activity_street_view"
+            android:screenOrientation="landscape" >
         </activity>
     </application>
 

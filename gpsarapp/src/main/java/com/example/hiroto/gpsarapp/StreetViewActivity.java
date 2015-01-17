@@ -1,33 +1,54 @@
 package com.example.hiroto.gpsarapp;
 
-import android.app.Activity;
 import android.content.Context;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
-import android.view.WindowManager;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.google.android.gms.maps.StreetViewPanoramaOptions;
+import com.google.android.gms.maps.StreetViewPanorama;
+import com.google.android.gms.maps.StreetViewPanoramaFragment;
 import com.google.android.gms.maps.StreetViewPanoramaView;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.StreetViewPanoramaCamera;
 import com.google.android.maps.GeoPoint;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * ストリートビューを用い,ナビゲーションを行うクラス
  * @author hiroto
  */
-public class StreetViewActivity extends Activity implements LocationListener {
+public class StreetViewActivity extends ActionBarActivity implements LocationListener {
 
     private StreetViewPanoramaView svpView;
     private LocationManager mLocationManager;
     private GeoPoint geoPoint;
-
+    private StreetViewPanoramaFragment fm;
+    private StreetViewPanoramaCamera camera;
+    private StreetViewPanorama map;
     private static  LatLng PIN;//位置
-
+    // メニューアイテム識別用のID
+    private static final int MENU_ID_A = 0;
+    private static final int MENU_ID_B = 1;
+    //タイマーによる処理
+    private RouteNaviTask mTask = null;
+    private Timer mTimer   = null;
+    private Handler mHandler = new Handler();
+    private float mLaptime = 0.0f;
+    //タイマ用イテレータ
+    private Iterator mTimeIter;
 
     /**
      * Activity生成時に行われる処理
@@ -37,28 +58,27 @@ public class StreetViewActivity extends Activity implements LocationListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_street_view);
+        // タイトルバーの削除
+        //requestWindowFeature(Window.FEATURE_NO_TITLE);
         GPSCalibration();
         geoPoint = new GeoPoint((int)(nowPoint().getLatitude()*1E6),(int)(nowPoint().getLongitude()*1E6));
         PIN = new LatLng((double)(geoPoint.getLatitudeE6() / 1E6),(double)(geoPoint.getLongitudeE6() / 1E6));
-        StreetViewPanoramaOptions options = new StreetViewPanoramaOptions();
 
+        fm = (StreetViewPanoramaFragment)getFragmentManager().findFragmentById(R.id.street_view);
+        map = fm.getStreetViewPanorama();
+        camera = new StreetViewPanoramaCamera(10.0f, 10.0f, 165.0f);
         if (savedInstanceState == null) {
-            options.position(PIN); //場所の指定
-            options.panningGesturesEnabled(true); //画面を指でグリグリ動かす
-            options.streetNamesEnabled(false); //道路名は表示しない
-            options.userNavigationEnabled(true); //ナビゲーションを有効
-            options.zoomGesturesEnabled(true); //ピンチで拡大を有効
+            map.setStreetNamesEnabled(false);//道路名は表示しない
+            map.setUserNavigationEnabled(true);//ナビゲーションを有効
+            map.setZoomGesturesEnabled(true);//ピンチで拡大を有効
+            map.setPanningGesturesEnabled(true);//画面を指で動かす
+            map.setPosition(PIN);
+            map.animateTo(camera, 1000);//カメラをその位置へ移動
         }
-
-        svpView = new StreetViewPanoramaView(this, options);
-        addContentView(svpView,
-                new WindowManager.LayoutParams(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT));
-        svpView.onCreate(savedInstanceState);
     }
 
     @Override
     protected void onDestroy() {
-        svpView.onDestroy();
         super.onDestroy();
     }
     @Override
@@ -68,26 +88,67 @@ public class StreetViewActivity extends Activity implements LocationListener {
     }
     @Override
     public void onLowMemory() {
-        svpView.onLowMemory();
         super.onLowMemory();
     }
 
     @Override
     protected void onPause() {
-        svpView.onPause();
         super.onPause();
     }
 
     @Override
     protected void onResume() {
-        svpView.onResume();
         super.onResume();
     }
 
+    /**
+     * OptionsMenuを作成する
+     * @param menu メニュー
+     * @return
+     */
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        svpView.onSaveInstanceState(outState);
-        super.onSaveInstanceState(outState);
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // メニューの要素を追加
+        // メニューアイテムの追加
+        menu.add(Menu.NONE, MENU_ID_A, Menu.NONE, "ナビゲーション開始");
+        menu.add(Menu.NONE, MENU_ID_B, Menu.NONE, "ナビゲーション解除");
+
+        return true;
+    }
+    /**
+     *
+     */
+    @Override
+    public boolean onPrepareOptionsMenu (Menu menu) {
+        if(!NavigationManager.getNavigationFlag())
+            menu.findItem(MENU_ID_A).setEnabled(false);
+        return super.onPrepareOptionsMenu(menu);
+    }
+    /**
+     * メニューが選択された時の処理
+     * @param item メニュー項目
+     * @return
+     */
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // addしたときのIDで識別
+        switch (item.getItemId()) {
+            case MENU_ID_A:
+                Toast.makeText(this, "ナビゲーション開始", Toast.LENGTH_SHORT).show();
+                //タイマ処理
+                //タイマーの初期化処理
+                mTask = new RouteNaviTask();
+                mLaptime = 0.0f;
+                mTimer = new Timer(true);
+                mTimer.schedule(mTask, 100, 100);
+                //ルート処理
+                return true;
+
+            case MENU_ID_B:
+                Toast.makeText(this, "ナビゲーション解除", Toast.LENGTH_SHORT).show();
+                NavigationManager.setNavigationFlag(false);
+                return true;
+        }
+        return false;
     }
     /**
      * GPSの緯度と経度を初期化する.
@@ -108,6 +169,7 @@ public class StreetViewActivity extends Activity implements LocationListener {
             GPSCalibration();
         }
     }
+
     /**
      * 現在地を取得する.
      * 最適な精度を選ぶ処理をさせる.
@@ -155,8 +217,34 @@ public class StreetViewActivity extends Activity implements LocationListener {
                 .getLongitude() * 1E6));
         Log.d("LocationChanged",String.valueOf(geoPoint));
         PIN = new LatLng((double)(geoPoint.getLatitudeE6() / 1E6),(double)(geoPoint.getLongitudeE6() / 1E6));
-        svpView.invalidate();
+        map.setPosition(PIN);
     }
+
+    /**
+     *  ルートを検索するタスクを生成するクラス
+     */
+    class RouteNaviTask extends TimerTask {
+
+        @Override
+        public void run() {
+            // mHandlerを通じてUI Threadへ処理をキューイング
+            mHandler.post( new Runnable() {
+                public void run() {
+                    List<List<HashMap<String, String>>> route = NavigationManager.getRoute();
+                    if(mTimeIter == null){
+                        mTimeIter = route.iterator();
+                    }
+                    if(!mTimeIter.hasNext()) {
+                        //タイマーの停止処理
+                        mTimer.cancel();
+                        mTimer = null;
+                    }
+
+                }
+            });
+        }
+    }
+
 
 }
 
