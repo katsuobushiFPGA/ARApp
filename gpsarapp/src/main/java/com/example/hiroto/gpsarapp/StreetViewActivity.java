@@ -67,14 +67,14 @@ public class StreetViewActivity extends ActionBarActivity implements LocationLis
 
         fm = (StreetViewPanoramaFragment)getFragmentManager().findFragmentById(R.id.street_view);
         map = fm.getStreetViewPanorama();
-        camera = new StreetViewPanoramaCamera(10.0f, 10.0f, 165.0f);
+        camera = new StreetViewPanoramaCamera(10.0f, 5.0f, 165.0f);
         if (savedInstanceState == null) {
             map.setStreetNamesEnabled(false);//道路名は表示しない
             map.setUserNavigationEnabled(true);//ナビゲーションを有効
             map.setZoomGesturesEnabled(true);//ピンチで拡大を有効
             map.setPanningGesturesEnabled(true);//画面を指で動かす
             map.setPosition(PIN);
-            map.animateTo(camera, 1000);//カメラをその位置へ移動
+//            map.animateTo(camera, 1000);//カメラをその位置へ移動
         }
     }
 
@@ -234,13 +234,38 @@ public class StreetViewActivity extends ActionBarActivity implements LocationLis
                     List<List<HashMap<String, String>>> route = NavigationManager.getRoute();
                     Log.d("size",String.valueOf(route.get(0).size()));
                     HashMap<String,String> hm = route.get(0).get(counter);
-                    map.setPosition( new LatLng(Double.valueOf(hm.get("lat")),Double.valueOf(hm.get("lng"))) );
+                    float[] results = {0,0,0};//距離,方位角,方位角
+                    double lat_now = 0;
+                    double lng_now = 0;
+                    //counterが0の場合,現在位置を起点とする.そうでない場合はひとつ前のルート情報を参照する.
+                    if(counter==0){
+                        lat_now = PIN.latitude;
+                        lng_now = PIN.longitude;
+                    }else {
+                        lat_now = Double.valueOf(route.get(0).get(counter-1).get("lat"));
+                        lng_now = Double.valueOf(route.get(0).get(counter-1).get("lng"));
+                    }
+
+                    double lat = Double.valueOf(hm.get("lat"));
+                    double lng = Double.valueOf(hm.get("lng"));
+                    Location.distanceBetween(lat_now,lng_now,lat,lng,results);//方位角の計算
+                    int rad = 0;
+                    if(results[1] < 0) {
+                        rad = 360 - Math.abs((int)results[1]);
+                    }else {
+                        rad = (int)results[1];
+                    }
+                    map.animateTo(new StreetViewPanoramaCamera(0.0f, 0.0f, rad),5000);
+
+                    map.setPosition( new LatLng(lat,lng) ,rad);
+                    Log.d("results",String.valueOf(results[1]));
                     counter++;
                     if(counter >= route.get(0).size()) {
                         //タイマーの停止処理
                         mTimer.cancel();
                         mTimer = null;
                         Toast.makeText(StreetViewActivity.this, "ナビゲーション終了", Toast.LENGTH_SHORT).show();
+                        counter=0;git 
                     }
                 }
             });
