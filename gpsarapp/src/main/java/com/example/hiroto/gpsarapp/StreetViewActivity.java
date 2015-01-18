@@ -265,7 +265,7 @@ public class StreetViewActivity extends ActionBarActivity implements LocationLis
                         mTimer.cancel();
                         mTimer = null;
                         Toast.makeText(StreetViewActivity.this, "ナビゲーション終了", Toast.LENGTH_SHORT).show();
-                        counter=0;git 
+                        counter=0;
                     }
                 }
             });
