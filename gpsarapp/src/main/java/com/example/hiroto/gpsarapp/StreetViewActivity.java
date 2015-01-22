@@ -9,8 +9,13 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
+import android.view.Display;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.WindowManager;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.StreetViewPanorama;
@@ -20,8 +25,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.StreetViewPanoramaCamera;
 import com.google.android.maps.GeoPoint;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -48,9 +53,10 @@ public class StreetViewActivity extends ActionBarActivity implements LocationLis
     private Handler mHandler = new Handler();
     private float mLaptime = 0.0f;
     //タイマ用イテレータ
-    private Iterator mTimeIter;
     private int counter;
-
+    //距離表示用
+    private TextView mTdistance;
+    private static final int TEXT_SIZE = 80;
     /**
      * Activity生成時に行われる処理
      * @param savedInstanceState
@@ -58,6 +64,11 @@ public class StreetViewActivity extends ActionBarActivity implements LocationLis
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // 画面サイズの取得
+        Display disp = ((WindowManager) this.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
+        int displayX = disp.getWidth();
+        int displayY =disp.getHeight();
+
         setContentView(R.layout.activity_street_view);
         // タイトルバーの削除
         //requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -76,6 +87,21 @@ public class StreetViewActivity extends ActionBarActivity implements LocationLis
             map.setPosition(PIN);
 //            map.animateTo(camera, 1000);//カメラをその位置へ移動
         }
+        // 登録処理を行うlayoutの作成
+        LinearLayout layout = new LinearLayout(this);
+        layout.setOrientation(LinearLayout.HORIZONTAL);
+        layout.setGravity(Gravity.BOTTOM | Gravity.RIGHT);
+        //距離を表示するテキスト
+        mTdistance = new TextView(this);
+        mTdistance.setText("");
+        mTdistance.setWidth(displayX);
+        mTdistance.setHeight(displayY - TEXT_SIZE);
+
+        // 各要素の登録
+        layout.addView(mTdistance, 0);
+
+        addContentView(layout, new WindowManager.LayoutParams(WindowManager.LayoutParams.FILL_PARENT,
+                WindowManager.LayoutParams.FILL_PARENT));
     }
 
     @Override
@@ -245,7 +271,6 @@ public class StreetViewActivity extends ActionBarActivity implements LocationLis
                         lat_now = Double.valueOf(route.get(0).get(counter-1).get("lat"));
                         lng_now = Double.valueOf(route.get(0).get(counter-1).get("lng"));
                     }
-
                     double lat = Double.valueOf(hm.get("lat"));
                     double lng = Double.valueOf(hm.get("lng"));
                     Location.distanceBetween(lat_now,lng_now,lat,lng,results);//方位角の計算
@@ -259,6 +284,7 @@ public class StreetViewActivity extends ActionBarActivity implements LocationLis
 
                     map.setPosition( new LatLng(lat,lng) ,rad);
                     Log.d("results",String.valueOf(results[1]));
+                    calcDistance(new LatLng(lat_now,lng_now),NavigationManager.getTarget());
                     counter++;
                     if(counter >= route.get(0).size()) {
                         //タイマーの停止処理
@@ -269,6 +295,23 @@ public class StreetViewActivity extends ActionBarActivity implements LocationLis
                     }
                 }
             });
+        }
+    }
+    private void calcDistance(LatLng origin,LatLng target) {
+        float[] results = new float[3];
+        String distance = "";
+
+        try {
+            Location.distanceBetween(origin.latitude,origin.longitude,target.latitude,target.longitude,results);
+            if(results != null && results.length > 0) {
+                if(results[0] < 1000)
+                    mTdistance.setText("あと" + String.valueOf((int)results[0] + "m")) ;
+
+                else
+                    mTdistance.setText("あと" + new BigDecimal(results[0]).divide(new BigDecimal(1E3),3,BigDecimal.ROUND_HALF_UP).toString() + "km");
+            }
+        } catch (IllegalArgumentException ex) {
+            ex.printStackTrace();
         }
     }
 
