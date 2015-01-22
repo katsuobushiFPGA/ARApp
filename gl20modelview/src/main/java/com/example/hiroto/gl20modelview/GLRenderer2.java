@@ -113,8 +113,9 @@ public class GLRenderer2 implements
                 0.0f,0.8f,5.0f, //カメラの視点
                 0.0f,0.8f,0.0f, //カメラの焦点
                 0.0f,1.0f,0.0f);//カメラの上方向
-//        animationWalk();
-        animationHandUp(0,90,0);
+        animationWalk();
+//        animationHandUp(0,90,0);
+
         tick++;
 
         //モデルの描画
