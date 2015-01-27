@@ -92,7 +92,7 @@ public class StreetViewActivity extends ActionBarActivity implements LocationLis
         layout.setOrientation(LinearLayout.HORIZONTAL);
         layout.setGravity(Gravity.BOTTOM | Gravity.RIGHT);
         //距離を表示するテキスト
-        mTdistance = new TextView(this);
+              mTdistance = new TextView(this);
         mTdistance.setText("");
         mTdistance.setWidth(displayX);
         mTdistance.setHeight(displayY - TEXT_SIZE);

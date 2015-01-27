@@ -13,9 +13,12 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Display;
+import android.view.Gravity;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.WindowManager.LayoutParams;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.google.android.maps.GeoPoint;
 
@@ -43,7 +46,9 @@ public class ARActivity extends Activity implements SensorEventListener,
     private LocationManager locationManager;
     private GeoPoint geoPoint;
     private GeomagneticField geomagneticField;
-
+    
+    private TextView mTnaviView;
+    private static final int TEXT_SIZE = 80;
     /**
      * ARActivityが作成された時に初期化を行う。
      *
@@ -55,13 +60,13 @@ public class ARActivity extends Activity implements SensorEventListener,
 
         // フルスクリーン指定
         getWindow().clearFlags(
-                WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+                LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
+        getWindow().addFlags(LayoutParams.FLAG_FULLSCREEN);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
 
         // ARViewの取得
         arView = new ARView(this, DBService.cursor);
-        //  DBService.cursor.close();
+
         // 各種センサーの用意
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         listMag = sensorManager.getSensorList(Sensor.TYPE_MAGNETIC_FIELD);
@@ -71,13 +76,34 @@ public class ARActivity extends Activity implements SensorEventListener,
         Display disp = ((WindowManager) this
                 .getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
         int displayX = disp.getWidth();
-
+        int displayY =disp.getHeight();
+        //ナビ情報を表示するViewの生成
+        LinearLayout layout = new LinearLayout(this);
+                layout.setOrientation(LinearLayout.HORIZONTAL);
+                layout.setGravity(Gravity.BOTTOM | Gravity.RIGHT);
+        // TextView
+        //距離を表示するテキスト
+        mTnaviView = new TextView(this);
+        mTnaviView.setText("");
+        mTnaviView.setTextSize(12);
+        mTnaviView.setWidth(displayX);
+        mTnaviView.setHeight(displayY - TEXT_SIZE);
+        layout.addView(mTnaviView,0);
+        
         // Viewの重ね合わせ
         setContentView(new CameraView(this));
         addContentView(arView, new LayoutParams(LayoutParams.FILL_PARENT,
                 LayoutParams.FILL_PARENT));
+        addContentView(layout,new LayoutParams(LayoutParams.FILL_PARENT,
+                LayoutParams.FILL_PARENT));
     }
-
+    //	HTMLのタグ除去と「:」と「,」を削除する。
+    private String htmlRemover(String str){
+       return  str.replaceAll("<.+?>", "");
+    }
+    private String tagReplacer(String str) {
+        return str.replaceAll("<br>","\n");
+    }
     @Override
     public void onStart() {
         super.onStart();
@@ -98,6 +124,8 @@ public class ARActivity extends Activity implements SensorEventListener,
                 SensorManager.SENSOR_DELAY_NORMAL);
         sensorManager.registerListener(this, listAcc.get(0),
                 SensorManager.SENSOR_DELAY_NORMAL);
+        if(NavigationManager.getNavigationFlag())
+            mTnaviView.setText(tagReplacer(NavigationManager.getPosinfo()));
         Log.d("ONRESUME:", "TEST");
         Log.d("FLAG:", String.valueOf(NavigationManager.getNavigationFlag()));
     }
