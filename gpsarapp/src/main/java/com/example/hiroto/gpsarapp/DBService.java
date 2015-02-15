@@ -161,6 +161,18 @@ public class DBService extends Service {
         values.put("image","adachi_library");
         values.put("description", "adachi_library");
         db.insert(DB_TABLE, "", values);
+        values.put("info", "アサヒビール");
+        values.put("latitude", 35709811);
+        values.put("longitude", 139800481);
+        values.put("image","asahi");
+        values.put("description", "asahi");
+        db.insert(DB_TABLE, "", values);
+        values.put("info", "浅草寺");
+        values.put("latitude", 35714765);
+        values.put("longitude", 139796655);
+        values.put("image","sensoji");
+        values.put("description", "sensoji");
+        db.insert(DB_TABLE, "", values);
     }
 
     /**

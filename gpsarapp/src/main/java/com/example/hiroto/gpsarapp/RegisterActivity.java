@@ -1,10 +1,10 @@
 package com.example.hiroto.gpsarapp;
 
-import android.app.Activity;
-import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
-import android.widget.Toast;
+        import android.app.Activity;
+        import android.os.Bundle;
+        import android.view.View;
+        import android.widget.Button;
+        import android.widget.Toast;
 
 /**
  * スポットの登録最終処理を行うクラス

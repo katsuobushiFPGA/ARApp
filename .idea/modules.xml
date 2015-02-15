@@ -3,7 +3,6 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/ARApp.iml" filepath="$PROJECT_DIR$/ARApp.iml" />
-      <module fileurl="file://$PROJECT_DIR$/MyApplication.iml" filepath="$PROJECT_DIR$/MyApplication.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/argame/argame.iml" filepath="$PROJECT_DIR$/argame/argame.iml" />
       <module fileurl="file://$PROJECT_DIR$/charadisp3d/charadisp3d.iml" filepath="$PROJECT_DIR$/charadisp3d/charadisp3d.iml" />

@@ -222,7 +222,7 @@ public class ARView extends View {
             // ARテキストが視野に存在すれば描画処理を行う
             if (Math.abs(sub) < (ANGLE / 2)) {
                 // 距離によってARテキストのサイズを決める
-                float textSize = 50 * (float) (VIEW_LIMIT - distance)
+                float textSize = 80 * (float) (VIEW_LIMIT - distance)
                         / VIEW_LIMIT;
                 paint.setTextSize(textSize);
 
@@ -258,8 +258,8 @@ public class ARView extends View {
 
         // 吹き出しの描画
         RectF rectF = new RectF(bLeft, bTop, bRight, bBottom);
-        paint.setColor(Color.LTGRAY);
-        paint.setAlpha(128);//透明度の設定
+        paint.setColor(Color.WHITE);
+        paint.setAlpha(255);//透明度の設定
         canvas.drawRoundRect(rectF, 5, 5, paint);
 
         // 三角形の描画
@@ -274,8 +274,8 @@ public class ARView extends View {
         canvas.drawPath(path, paint);
 
         // 文字列の描画
-//        paint.setColor(Color.BLACK);
-        paint.setColor(Color.WHITE);
+        paint.setColor(Color.BLACK);
+        //paint.setColor(Color.WHITE);
         canvas.drawText(text, left, top, paint);
     }
 

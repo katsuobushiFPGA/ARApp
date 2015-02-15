@@ -53,6 +53,12 @@
                                            東日本旅客鉄道（JR東日本）・東京地下鉄（東京メトロ）・東武鉄道・首都圏新都市鉄道の駅である。\n</string>
     <string name="adachi_library">足立区立中央図書館（あだちくりつ ちゅうおうとしょかん）は、東京都足立区千住五丁目にある公共図書館。\n
                                        都営集合住宅の入る高層ビルの1〜3階を占める。</string>
+    <string name="sensoji">浅草寺（せんそうじ）とは、東京都台東区浅草二丁目にある東京都内最古の寺である。山号は金龍山。\n
+                              本尊は聖観音菩薩（しょうかんのんぼさつ）。元は天台宗に属していたが第二次世界大戦後独立し、\n
+                              聖観音宗の総本山となった。観音菩薩を本尊とすることから「浅草観音」あるいは「浅草の観音様」と\n
+                              通称され、広く親しまれている。東京都内では、唯一の坂東三十三箇所観音霊場の札所（13番）である。\n
+                              江戸三十三箇所観音霊場の札所（1番）でもある。</string>
+    <string name="asahi">アサヒビール株式会社（英: Asahi Breweries, Ltd.）は、日本の大手ビールメーカー。</string>
     <string name="title_activity_maps">MapsActivity</string>
     <string name="title_activity_maps_activity">Map</string>
     <string name="title_activity_register">RegisterActivity</string>
